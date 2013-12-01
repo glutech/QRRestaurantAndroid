@@ -1,19 +1,24 @@
 package cn.com.zdez.qrrestaurant;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.content.Context;
-import android.os.Build;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class RestaurantChooserActivity extends ActionBarActivity implements ActionBar.OnNavigationListener {
 
@@ -33,6 +38,9 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
+        // 添加返回箭头
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         // Set up the dropdown list navigation in the action bar.
         actionBar.setListNavigationCallbacks(
                 // Specify a SpinnerAdapter to populate the dropdown list.
@@ -40,7 +48,7 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
                         actionBar.getThemedContext(),
                         android.R.layout.simple_list_item_1,
                         android.R.id.text1,
-                        new String[] {
+                        new String[]{
                                 getString(R.string.title_section1),
                                 getString(R.string.title_section2),
                                 getString(R.string.title_section3),
@@ -64,11 +72,15 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
                 getSupportActionBar().getSelectedNavigationIndex());
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+
         getMenuInflater().inflate(R.menu.restaurant_chooser, menu);
         return true;
     }
@@ -80,6 +92,25 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_settings:
+                return true;
+            case android.R.id.home:
+                // This is called when the Home (Up) button is pressed in the action bar.
+                // Create a simple intent that starts the hierarchical parent activity and
+                // use NavUtils in the Support Package to ensure proper handling of Up.
+                Intent upIntent = new Intent(this, QRRMainActivity.class);
+                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                    // This activity is not part of the application's task, so create a new task
+                    // with a synthesized back stack.
+                    TaskStackBuilder.from(this)
+                            // If there are ancestor activities, they should be added here.
+                            .addNextIntent(upIntent)
+                            .startActivities();
+                    finish();
+                } else {
+                    // This activity is part of the application's task, so simply
+                    // navigate up to the hierarchical parent activity.
+                    NavUtils.navigateUpTo(this, upIntent);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -105,6 +136,9 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+        public PlaceholderFragment() {
+        }
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -117,15 +151,39 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
             return fragment;
         }
 
-        public PlaceholderFragment() {
-        }
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_restaurant_chooser, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
+            ListView resList = (ListView) rootView.findViewById(R.id.section_list_view);
+            final ArrayList<String> list = new ArrayList<String>();
+            String tempStr;
+            if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+                tempStr = getString(R.string.title_section1);
+            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
+                tempStr = getString(R.string.title_section2);
+            } else
+                tempStr = getString(R.string.title_section3);
+
+            for (int i = 0; i < 30; i++) {
+                list.add(tempStr + "_" + i);
+            }
+
+            resList.setAdapter(new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_list_item_1, list));
+
+            resList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Intent intent = new Intent();
+                    intent.putExtra("res_id", list.get(i));
+                    intent.setClass(getActivity(), RestaurantPlateListActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+//            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+//            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
     }

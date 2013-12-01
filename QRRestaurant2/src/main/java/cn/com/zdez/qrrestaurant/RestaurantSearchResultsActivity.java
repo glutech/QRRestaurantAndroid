@@ -1,6 +1,5 @@
 package cn.com.zdez.qrrestaurant;
 
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -11,45 +10,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
-import android.widget.Button;
 
-public class QRRMainActivity extends ActionBarActivity {
-
-    private Button btn_to_scanqr;
-    private Button btn_to_chooseR;
+public class RestaurantSearchResultsActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_res_search_results);
 
-        btn_to_scanqr = (Button) findViewById(R.id.btn_to_scanqr);
-        btn_to_chooseR = (Button) findViewById(R.id.btn_to_choose);
-
-        btn_to_chooseR.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent startScan = new Intent();
-                // Start to scan
-                startScan.setClass(QRRMainActivity.this, RestaurantChooserActivity.class);
-                startActivity(startScan);
-            }
-        });
-
-        btn_to_scanqr.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Start Restaurant chooser
-            }
-        });
-
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new PlaceholderFragment())
+                    .commit();
+        }
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+        
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.qrrmain, menu);
+        getMenuInflater().inflate(R.menu.restaurant_search_results, menu);
         return true;
     }
 
@@ -63,6 +44,22 @@ public class QRRMainActivity extends ActionBarActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * A placeholder fragment containing a simple view.
+     */
+    public static class PlaceholderFragment extends Fragment {
+
+        public PlaceholderFragment() {
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.activity_res_search_results, container, false);
+            return rootView;
+        }
     }
 
 }

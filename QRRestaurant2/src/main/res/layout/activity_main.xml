@@ -15,7 +15,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/menu_title"
-        android:background="@color/purple_light" />
+        android:background="@color/green_light" />
 
     <Button
         android:id="@+id/btn_to_choose"
