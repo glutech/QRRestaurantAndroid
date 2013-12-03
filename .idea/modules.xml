@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/QRRestaurant2/QRRestaurant2.iml" filepath="$PROJECT_DIR$/QRRestaurant2/QRRestaurant2.iml" />
-      <module fileurl="file://$PROJECT_DIR$/QRRestaurant2Project.iml" filepath="$PROJECT_DIR$/QRRestaurant2Project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/QRRestaurantAndroid.iml" filepath="$PROJECT_DIR$/QRRestaurantAndroid.iml" />
     </modules>
   </component>
 </project>
