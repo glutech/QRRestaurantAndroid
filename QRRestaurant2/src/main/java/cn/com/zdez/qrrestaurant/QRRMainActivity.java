@@ -1,17 +1,14 @@
 package cn.com.zdez.qrrestaurant;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.Button;
+
+import com.google.zxing.client.android.CaptureActivity;
 
 public class QRRMainActivity extends ActionBarActivity {
 
@@ -28,17 +25,19 @@ public class QRRMainActivity extends ActionBarActivity {
 
         btn_to_chooseR.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent startScan = new Intent();
+                Intent toChoose = new Intent();
                 // Start to scan
-                startScan.setClass(QRRMainActivity.this, RestaurantChooserActivity.class);
-                startActivity(startScan);
+                toChoose.setClass(QRRMainActivity.this, RestaurantChooserActivity.class);
+                startActivity(toChoose);
             }
         });
 
         btn_to_scanqr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Start Restaurant chooser
+                Intent toScan = new Intent();
+                toScan.setClass(QRRMainActivity.this, CaptureActivity.class);
+                startActivity(toScan);
             }
         });
 
