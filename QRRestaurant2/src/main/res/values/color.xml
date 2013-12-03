@@ -7,4 +7,11 @@
     <color name="green_light">#99CC00</color>
     <color name="purple">#9933CC</color>
     <color name="purple_light">#AA66CC</color>
+
+    <color name="blue_t">#900099CC</color>
+    <color name="blue_light_t">#9033B5E5</color>
+    <color name="green_t">#90669900</color>
+    <color name="green_light_t">#9099CC00</color>
+    <color name="purple_t">#909933CC</color>
+    <color name="purple_light_t">#90AA66CC</color>
 </resources>
