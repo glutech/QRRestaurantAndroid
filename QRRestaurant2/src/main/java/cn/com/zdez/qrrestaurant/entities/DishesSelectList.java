@@ -1,11 +1,11 @@
-package cn.com.zdez.qrrestaurant;
+package cn.com.zdez.qrrestaurant.entities;
 
 import java.util.ArrayList;
 
 /**
  * Created by LuoHanLin on 13-12-1.
  */
-public class PlatesSelectList {
+public class DishesSelectList {
 
     public static ArrayList<String> plateList = new ArrayList<String>();
 

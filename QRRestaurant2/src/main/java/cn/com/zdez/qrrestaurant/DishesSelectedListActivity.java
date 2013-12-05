@@ -12,16 +12,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class PlatesSelectedListActivity extends ActionBarActivity {
+public class DishesSelectedListActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_plates_selected_list);
+        setContentView(R.layout.activity_dishes_selected_list);
 
         final ActionBar actionBar = getSupportActionBar();
 
@@ -57,7 +56,7 @@ public class PlatesSelectedListActivity extends ActionBarActivity {
                 // This is called when the Home (Up) button is pressed in the action bar.
                 // Create a simple intent that starts the hierarchical parent activity and
                 // use NavUtils in the Support Package to ensure proper handling of Up.
-                Intent upIntent = new Intent(this, RestaurantPlateListActivity.class);
+                Intent upIntent = new Intent(this, RestaurantDishesListActivity.class);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     // This activity is not part of the application's task, so create a new task
                     // with a synthesized back stack.
@@ -87,12 +86,12 @@ public class PlatesSelectedListActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_plates_selected_list, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_dishes_selected_list, container, false);
 
             ListView selectedPlateList = (ListView) rootView.findViewById(R.id.plates_selected_list_view);
 
             selectedPlateList.setAdapter(new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1, PlatesSelectList.plateList));
+                    android.R.layout.simple_list_item_1, DishesSelectList.plateList));
 
             return rootView;
         }

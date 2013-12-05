@@ -25,7 +25,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class RestaurantPlateListActivity extends ActionBarActivity implements ActionBar.TabListener {
+public class RestaurantDishesListActivity extends ActionBarActivity implements ActionBar.TabListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -45,7 +45,7 @@ public class RestaurantPlateListActivity extends ActionBarActivity implements Ac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_restaurant_plate_list);
+        setContentView(R.layout.activity_restaurant_dishes_list);
 
 
         // Set up the action bar.
@@ -217,12 +217,12 @@ public class RestaurantPlateListActivity extends ActionBarActivity implements Ac
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_restaurant_plate_list, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_restaurant_dishes_list, container, false);
 //            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 //            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
             ListView platesList = (ListView) rootView.findViewById(R.id.plates_list_view);
             final Button btnSelectedCounter = (Button) rootView.findViewById(R.id.btn_selected_counter);
-            btnSelectedCounter.setText("已点：" + PlatesSelectList.getCounter());
+            btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
 
             final ArrayList<String> list = new ArrayList<String>();
             String tempStr = "";
@@ -252,9 +252,9 @@ public class RestaurantPlateListActivity extends ActionBarActivity implements Ac
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     String selectItem = list.get(i);
-                    PlatesSelectList.add(selectItem);
+                    DishesSelectList.add(selectItem);
                     Toast.makeText(getActivity(), "已将" + selectItem + "放入菜单",Toast.LENGTH_SHORT).show();
-                    btnSelectedCounter.setText("已点：" + PlatesSelectList.getCounter());
+                    btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
                 }
             });
 
@@ -262,7 +262,7 @@ public class RestaurantPlateListActivity extends ActionBarActivity implements Ac
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent();
-                    intent.setClass(getActivity(), PlatesSelectedListActivity.class);
+                    intent.setClass(getActivity(), DishesSelectedListActivity.class);
                     startActivity(intent);
                 }
             });
