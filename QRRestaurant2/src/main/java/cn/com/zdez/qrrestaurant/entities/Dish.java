@@ -6,18 +6,19 @@ package cn.com.zdez.qrrestaurant.entities;
  * 菜品ID，所属餐厅 ID，名称，描述，评分，图片地址（包括存储/缓存地址和网络地址）
  * 菜品所属类别名称，菜品标签
  */
-public class Dishes {
+public class Dish {
 
     private String dID;
     private String dName;
     private String rID;
     private String dDescription;
-    private String dRate;
+    private int dRate;
     private String dCoverPath;
     private String dCateName;
     private String[] dTags;
+    private boolean isSelectedInList = false; // Only used in layout render
 
-    public Dishes(String dID, String rID, String dName, String dCateName) {
+    public Dish(String dID, String rID, String dName, String dCateName) {
         this.dID = dID;
         this.rID = rID;
         this.dName = dName;
@@ -56,11 +57,11 @@ public class Dishes {
         this.dDescription = dDescription;
     }
 
-    public String getdRate() {
+    public int getdRate() {
         return dRate;
     }
 
-    public void setdRate(String dRate) {
+    public void setdRate(int dRate) {
         this.dRate = dRate;
     }
 
@@ -86,6 +87,15 @@ public class Dishes {
 
     public void setdTags(String[] dTags) {
         this.dTags = dTags;
+    }
+
+
+    public boolean isSelectedInList() {
+        return isSelectedInList;
+    }
+
+    public void setSelectedInList(boolean isSelectedInList) {
+        this.isSelectedInList = isSelectedInList;
     }
 
 }

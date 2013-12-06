@@ -16,4 +16,10 @@ public class DishesSelectList {
     public static int getCounter(){
         return plateList.size();
     }
+
+    public static void remove(String d){
+        if(plateList.contains(d)){
+            plateList.remove(d);
+        }
+    }
 }

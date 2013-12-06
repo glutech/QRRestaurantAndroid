@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cn.com.zdez.qrrestaurant.layouts.DishesListItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_dish_title"
+            android:layout_alignParentLeft="true"
+            android:singleLine="true"
+            android:padding="3dp"
+            android:text="title_placeholder"
+            android:textSize="@dimen/abc_action_bar_title_text_size"
+            />
+        <com.loopj.android.image.SmartImageView
+            android:id="@+id/img_dish_cover"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:padding="3dp"
+            android:cropToPadding="true"
+            android:scaleType="centerCrop"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/ic_launcher"
+            />
+
+    </RelativeLayout>
+
+
+</cn.com.zdez.qrrestaurant.layouts.DishesListItemLayout>

@@ -11,19 +11,26 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Locale;
+
+import cn.com.zdez.qrrestaurant.entities.Dish;
+import cn.com.zdez.qrrestaurant.entities.DishesSelectList;
+import cn.com.zdez.qrrestaurant.utils.DishesListAdapter;
+import cn.com.zdez.qrrestaurant.utils.MakeUpRobot;
+import cn.com.zdez.qrrestaurant.utils.MyLog;
 
 public class RestaurantDishesListActivity extends ActionBarActivity implements ActionBar.TabListener {
 
@@ -41,6 +48,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
+    private static String TAG = RestaurantDishesListActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,41 +228,96 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             View rootView = inflater.inflate(R.layout.fragment_restaurant_dishes_list, container, false);
 //            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 //            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-            ListView platesList = (ListView) rootView.findViewById(R.id.plates_list_view);
+            ListView dishesList = (ListView) rootView.findViewById(R.id.plates_list_view);
+            dishesList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
             final Button btnSelectedCounter = (Button) rootView.findViewById(R.id.btn_selected_counter);
             btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
 
-            final ArrayList<String> list = new ArrayList<String>();
-            String tempStr = "";
-            if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-                tempStr = getString(R.string.pages_title1);
-            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
-                tempStr = getString(R.string.pages_title2);
-            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 3) {
-                tempStr = getString(R.string.pages_title3);
-            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 4) {
-                tempStr = getString(R.string.pages_title4);
-            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 5) {
-                tempStr = getString(R.string.pages_title5);
-            }
+//            final ArrayList<String> list = new ArrayList<String>();
+//            String tempStr = "";
+//            if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+//                tempStr = getString(R.string.pages_title1);
+//            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
+//                tempStr = getString(R.string.pages_title2);
+//            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 3) {
+//                tempStr = getString(R.string.pages_title3);
+//            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 4) {
+//                tempStr = getString(R.string.pages_title4);
+//            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 5) {
+//                tempStr = getString(R.string.pages_title5);
+//            }
+//
+//            for (int i = 0; i < 30; i++) {
+//                list.add(tempStr + "_" + i);
+//            }
 
-            for (int i = 0; i < 30; i++) {
-                list.add(tempStr + "_" + i);
-            }
+            dishesList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
-            platesList.setAdapter(new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1, list));
-
-            platesList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-            platesList.setItemsCanFocus(true);
-
-            platesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    String selectItem = list.get(i);
-                    DishesSelectList.add(selectItem);
-                    Toast.makeText(getActivity(), "已将" + selectItem + "放入菜单",Toast.LENGTH_SHORT).show();
-                    btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
+                public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
+                    Toast.makeText(getActivity(), i + " item checkedstate changed ", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                    return false;
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                    return false;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                    return false;
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode actionMode) {
+
+                }
+            });
+
+            final ArrayList<Dish> dishes = MakeUpRobot.getDishes();
+            final DishesListAdapter dishesListAdapter = new DishesListAdapter(getActivity(), R.id.plates_list_view, dishes);
+            dishesList.setAdapter(dishesListAdapter);
+
+//            dishesList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+//            dishesList.setItemsCanFocus(false);
+//            dishesList.setClickable(true);
+
+            dishesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    MyLog.d(TAG, "Item with index " + position + "clicked");
+//                    Dish dish = dishes.get(i);
+
+//                    // Set the dish selected if it is not selected before
+//                    if (dishes.get(i).isSelectedInList()) {
+//                        dish.setSelectedInList(true);
+//                        view.setBackgroundColor(getResources().getColor(R.color.blue));
+//                    } else {
+//                        //Other wise it should be unselected
+//                        dish.setSelectedInList(false);
+//                    }
+
+//                    dishes.set(i, dish);
+//                    dishesListAdapter.notifyDataSetChanged();
+
+
+                    dishesListAdapter.addNewSelection(position, !dishesListAdapter.isSelected(position));
+                    String selectItem = dishes.get(position).getdName();
+
+                    if (!dishesListAdapter.isSelected(position)) {
+                        Toast.makeText(getActivity(), "取消" + selectItem, Toast.LENGTH_SHORT).show();
+                        DishesSelectList.remove(selectItem);
+                        btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
+                    } else {
+                        DishesSelectList.add(selectItem);
+                        Toast.makeText(getActivity(), "已将" + selectItem + "放入菜单", Toast.LENGTH_SHORT).show();
+                        btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
+                    }
                 }
             });
 
@@ -269,6 +332,8 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
             return rootView;
         }
+
+
     }
 
 }
