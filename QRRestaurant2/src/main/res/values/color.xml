@@ -14,6 +14,7 @@
     <color name="green_light_t">#9099CC00</color>
     <color name="purple_t">#909933CC</color>
     <color name="purple_light_t">#90AA66CC</color>
+    <color name="green_t_30">#30669900</color>
 
     <color name="contents_text">#ff000000</color>
     <color name="encode_view">#ffffffff</color>
