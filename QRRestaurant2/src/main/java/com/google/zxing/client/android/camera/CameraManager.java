@@ -213,8 +213,9 @@ public final class CameraManager {
                 return null;
             }
 
+            // CHANGE: Modify for rect to square, height y->x
             int width = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_WIDTH, MAX_FRAME_WIDTH);
-            int height = findDesiredDimensionInRange(screenResolution.y, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
+            int height = findDesiredDimensionInRange(screenResolution.x, MIN_FRAME_HEIGHT, MAX_FRAME_HEIGHT);
 
             int leftOffset = (screenResolution.x - width) / 2;
             int topOffset = (screenResolution.y - height) / 2;
@@ -225,7 +226,7 @@ public final class CameraManager {
     }
 
     private static int findDesiredDimensionInRange(int resolution, int hardMin, int hardMax) {
-        int dim = 5 * resolution / 8; // Target 5/8 of each dimension
+        int dim = 6 * resolution / 8; // Target 6/8 of each dimension
         if (dim < hardMin) {
             return hardMin;
         }
@@ -252,15 +253,15 @@ public final class CameraManager {
                 // Called early, before init even finished
                 return null;
             }
-            rect.left = rect.left * cameraResolution.x / screenResolution.x;
-            rect.right = rect.right * cameraResolution.x / screenResolution.x;
-            rect.top = rect.top * cameraResolution.y / screenResolution.y;
-            rect.bottom = rect.bottom * cameraResolution.y / screenResolution.y;
+//            rect.left = rect.left * cameraResolution.x / screenResolution.x;
+//            rect.right = rect.right * cameraResolution.x / screenResolution.x;
+//            rect.top = rect.top * cameraResolution.y / screenResolution.y;
+//            rect.bottom = rect.bottom * cameraResolution.y / screenResolution.y;
             // CHANGE: 竖屏参数
-//            rect.left = rect.left * cameraResolution.y / screenResolution.x;
-//            rect.right = rect.right * cameraResolution.y / screenResolution.x;
-//            rect.top = rect.top * cameraResolution.x / screenResolution.y;
-//            rect.bottom = rect.bottom * cameraResolution.x / screenResolution.y;
+            rect.left = rect.left * cameraResolution.y / screenResolution.x;
+            rect.right = rect.right * cameraResolution.y / screenResolution.x;
+            rect.top = rect.top * cameraResolution.x / screenResolution.y;
+            rect.bottom = rect.bottom * cameraResolution.x / screenResolution.y;
             framingRectInPreview = rect;
         }
         return framingRectInPreview;

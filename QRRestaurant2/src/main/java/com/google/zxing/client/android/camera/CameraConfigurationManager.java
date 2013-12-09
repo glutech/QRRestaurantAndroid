@@ -27,8 +27,6 @@ import android.view.WindowManager;
 
 import com.google.zxing.client.android.PreferencesActivity;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -68,10 +66,22 @@ final class CameraConfigurationManager {
         WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
         Point theScreenResolution = new Point();
+
         display.getSize(theScreenResolution);
         screenResolution = theScreenResolution;
         Log.i(TAG, "Screen resolution: " + screenResolution);
-        cameraResolution = findBestPreviewSizeValue(parameters, screenResolution);
+
+        // CHANGE: Modify for portrait
+        Point screenResolutionForCamera = new Point();
+        screenResolutionForCamera.x = screenResolution.x;
+        screenResolutionForCamera.y = screenResolution.y;
+        // preview size is always something like 480*320, other 320*480
+        if (screenResolution.x < screenResolution.y) {
+            screenResolutionForCamera.x = screenResolution.y;
+            screenResolutionForCamera.y = screenResolution.x;
+        }
+
+        cameraResolution = findBestPreviewSizeValue(parameters, screenResolutionForCamera); // CHANGE: Modify for portrait, origin version: screenResolution
         Log.i(TAG, "Camera resolution: " + cameraResolution);
     }
 
@@ -127,7 +137,7 @@ final class CameraConfigurationManager {
         camera.setParameters(parameters);
 
         // CHANGE: 修改摄像头的方向
-//        camera.setDisplayOrientation(90);
+        camera.setDisplayOrientation(90);
 
         Camera.Parameters afterParameters = camera.getParameters();
         Camera.Size afterSize = afterParameters.getPreviewSize();
