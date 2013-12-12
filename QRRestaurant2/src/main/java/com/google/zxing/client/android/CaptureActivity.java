@@ -87,6 +87,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     private static final String[] ZXING_URLS = {"http://zxing.appspot.com/scan", "zxing://scan/"};
 
+    // zdez 二维码点餐专用的URL 识别
+    private static final String[] ZDEZ_QRR_URLS = {"http://qrr.zdez.com/scan/007/008", "zdez://scan/"};
+
     public static final int HISTORY_REQUEST_CODE = 0x0000bacc;
 
     private static final Collection<ResultMetadataType> DISPLAYABLE_METADATA_TYPES =

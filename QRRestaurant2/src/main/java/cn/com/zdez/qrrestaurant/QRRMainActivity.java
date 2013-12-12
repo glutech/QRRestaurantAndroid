@@ -10,10 +10,13 @@ import android.widget.Button;
 
 import com.google.zxing.client.android.CaptureActivity;
 
+import cn.com.zdez.qrrestaurant.websockets.AutobahnTest;
+
 public class QRRMainActivity extends ActionBarActivity {
 
     private Button btn_to_scanqr;
     private Button btn_to_chooseR;
+    private Button btn_to_booked;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +25,7 @@ public class QRRMainActivity extends ActionBarActivity {
 
         btn_to_scanqr = (Button) findViewById(R.id.btn_to_scanqr);
         btn_to_chooseR = (Button) findViewById(R.id.btn_to_choose);
+        btn_to_booked = (Button) findViewById(R.id.btn_to_booked);
 
         btn_to_chooseR.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -38,6 +42,13 @@ public class QRRMainActivity extends ActionBarActivity {
                 Intent toScan = new Intent();
                 toScan.setClass(QRRMainActivity.this, CaptureActivity.class);
                 startActivity(toScan);
+            }
+        });
+
+        btn_to_booked.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AutobahnTest.start();
             }
         });
 

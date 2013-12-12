@@ -31,6 +31,8 @@ import cn.com.zdez.qrrestaurant.entities.DishesSelectList;
 import cn.com.zdez.qrrestaurant.utils.DishesListAdapter;
 import cn.com.zdez.qrrestaurant.utils.MakeUpRobot;
 import cn.com.zdez.qrrestaurant.utils.MyLog;
+import cn.com.zdez.qrrestaurant.wsordermodule.WSConnection;
+import de.tavendo.autobahn.WebSocketConnection;
 
 public class RestaurantDishesListActivity extends ActionBarActivity implements ActionBar.TabListener {
 
@@ -43,6 +45,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
+
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -67,6 +70,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
         // 添加返回箭头
         actionBar.setDisplayHomeAsUpEnabled(true);
+
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -207,6 +211,11 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+
+        // 测试用的 websocket connection
+        WebSocketConnection mConnection;
+
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -232,6 +241,14 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             dishesList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
             final Button btnSelectedCounter = (Button) rootView.findViewById(R.id.btn_selected_counter);
             btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
+
+
+            // 测试用，在此模拟在某张餐桌上点餐的操作
+            // 首先，建立到服务器餐桌上的 ws 连接
+            long uid = 100;
+            long tid = 13;
+            WSConnection.getInstance(getActivity()).connect(tid, uid);
+            mConnection = WSConnection.getInstance(getActivity()).mConnection;
 
 //            final ArrayList<String> list = new ArrayList<String>();
 //            String tempStr = "";
@@ -279,6 +296,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                 }
             });
 
+
             final ArrayList<Dish> dishes = MakeUpRobot.getDishes();
             final DishesListAdapter dishesListAdapter = new DishesListAdapter(getActivity(), R.id.plates_list_view, dishes);
             dishesList.setAdapter(dishesListAdapter);
@@ -312,10 +330,12 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                     if (!dishesListAdapter.isSelected(position)) {
                         Toast.makeText(getActivity(), "取消" + selectItem, Toast.LENGTH_SHORT).show();
                         DishesSelectList.remove(selectItem);
+                        mConnection.sendTextMessage("delete " + String.valueOf(position));
                         btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
                     } else {
                         DishesSelectList.add(selectItem);
                         Toast.makeText(getActivity(), "已将" + selectItem + "放入菜单", Toast.LENGTH_SHORT).show();
+                        mConnection.sendTextMessage("add " + String.valueOf(position));
                         btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
                     }
                 }
@@ -333,7 +353,11 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             return rootView;
         }
 
-
+        @Override
+        public void onDestroy() {
+            mConnection.disconnect();
+            super.onDestroy();
+        }
     }
 
 }

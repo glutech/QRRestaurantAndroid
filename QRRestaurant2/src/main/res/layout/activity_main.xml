@@ -23,9 +23,23 @@
         android:id="@+id/btn_to_choose"
         android:layout_height="60dp"
         android:layout_width="fill_parent"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:textSize="22sp"
         android:text="选择餐馆"
         android:background="@drawable/btn_bg_green" />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:id="@+id/btn_to_booked"
+        android:textSize="22sp"
+        android:text="我的预订"
+        android:background="@color/purple_light_t"
+        android:layout_marginTop="30dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/temp_text"/>
 
 </LinearLayout>
