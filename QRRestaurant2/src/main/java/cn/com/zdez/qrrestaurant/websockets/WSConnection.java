@@ -1,8 +1,9 @@
-package cn.com.zdez.qrrestaurant.wsordermodule;
+package cn.com.zdez.qrrestaurant.websockets;
 
 import android.content.Context;
 import android.util.Log;
 
+import cn.com.zdez.qrrestaurant.utils.Constants;
 import cn.com.zdez.qrrestaurant.utils.ToastUtil;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
@@ -33,7 +34,7 @@ public class WSConnection {
     }
 
     public void connect(long tid, long uid) {
-        final String wsurl = BASE_WSURL + "?tid=" + String.valueOf(tid) + "&uid=" + String.valueOf(uid);
+        final String wsurl = Constants.WEBSOCKET_BASE_URL + Constants.ORDERING_MODULE_WS_URL + "?tid=" + String.valueOf(tid) + "&uid=" + String.valueOf(uid);
         try {
             mConnection.connect(wsurl, new WebSocketHandler() {
 

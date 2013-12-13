@@ -31,7 +31,7 @@ import cn.com.zdez.qrrestaurant.entities.DishesSelectList;
 import cn.com.zdez.qrrestaurant.utils.DishesListAdapter;
 import cn.com.zdez.qrrestaurant.utils.MakeUpRobot;
 import cn.com.zdez.qrrestaurant.utils.MyLog;
-import cn.com.zdez.qrrestaurant.wsordermodule.WSConnection;
+import cn.com.zdez.qrrestaurant.websockets.WSConnection;
 import de.tavendo.autobahn.WebSocketConnection;
 
 public class RestaurantDishesListActivity extends ActionBarActivity implements ActionBar.TabListener {

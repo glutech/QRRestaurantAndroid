@@ -20,8 +20,6 @@
     <string name="title_activity_restaurant_plate_list">" 点餐"</string>
     <string name="title_activity_plates_selected_list">已选菜品</string>
     <string name="title_activity_qrscanner">扫描餐桌</string>
-
-
     <string name="app_picker_name">应用</string>
     <string name="bookmark_picker_name">书签</string>
     <string name="button_add_calendar">添加事件至日历</string>
@@ -139,4 +137,6 @@
     <string name="wifi_changing_network">请求连接到网络\u2026</string>
     <string name="wifi_ssid_label">网络SSID</string>
     <string name="wifi_type_label">类型</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+
 </resources>
