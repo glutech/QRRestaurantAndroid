@@ -1,11 +1,15 @@
 package cn.com.zdez.qrrestaurant;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo.State;
 import android.preference.PreferenceManager;
 
 import cn.com.zdez.qrrestaurant.account.AccountManager;
 import cn.com.zdez.qrrestaurant.model.Customer;
+import cn.com.zdez.qrrestaurant.utils.MyLog;
 import cn.com.zdez.qrrestaurant.utils.QRPreferences;
 import cn.com.zdez.qrrestaurant.utils.SignupType;
 
@@ -14,6 +18,7 @@ import cn.com.zdez.qrrestaurant.utils.SignupType;
  */
 public class QRRestaurantApplication extends Application {
 
+    public static String TAG = QRRestaurantApplication.class.getSimpleName();
     public static final String PACKAGE_NAME = "cn.com.zdez.qrrestaurant";
     public static boolean isSignupWithAccount = false; // 是否使用用户名注册登录账户
     public static boolean isSignupWithDevice = false; // 是否使用 device id 注册登录
@@ -41,6 +46,7 @@ public class QRRestaurantApplication extends Application {
 
     /**
      * 返回程序的注册类型
+     *
      * @return
      */
     public static SignupType getSignupType() {
@@ -71,5 +77,7 @@ public class QRRestaurantApplication extends Application {
     public static void createAccountManager() {
         accountManager = QRPreferences.getCustomerInfoFromPrefs(mPrefs);
     }
+
+
 
 }

@@ -13,6 +13,9 @@ public final class Constants {
 
     public static final String HELP_URL = "http://zdez.com.cn/help.html";
 
+    // Zdez QRRestaurant QR prefix
+    public static final String PRE_QR_URL = "http://www.zdez.cn.qrrestaurant/";
+
 
     // HTTP URL, Websocket url
     public static final String HOST = "192.168.1.118";
@@ -24,6 +27,8 @@ public final class Constants {
     public static final String LOGIN_WITH_DEVICE_ID_URL = "/user/login_with_device";
     public static final String LOGIN_WITH_ACCOUNT_URL = "/user/login_with_account";
     public static final String ORDERING_MODULE_WS_URL = "/wsservlet/WSOrderWSServlet";
+
+    public static final String TABLE_TAKE_POST_URL = "/tables/take";
 
 
 

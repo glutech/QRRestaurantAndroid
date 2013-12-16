@@ -23,17 +23,32 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
 import cn.com.zdez.qrrestaurant.entities.Dish;
 import cn.com.zdez.qrrestaurant.entities.DishesSelectList;
+import cn.com.zdez.qrrestaurant.http.QRRHTTPClient;
+import cn.com.zdez.qrrestaurant.utils.ConnectivityUtil;
+import cn.com.zdez.qrrestaurant.utils.Constants;
 import cn.com.zdez.qrrestaurant.utils.DishesListAdapter;
 import cn.com.zdez.qrrestaurant.utils.MakeUpRobot;
 import cn.com.zdez.qrrestaurant.utils.MyLog;
+import cn.com.zdez.qrrestaurant.utils.ToastUtil;
+import cn.com.zdez.qrrestaurant.vo.ScanResultVo;
 import cn.com.zdez.qrrestaurant.websockets.WSConnection;
 import de.tavendo.autobahn.WebSocketConnection;
 
+/**
+ * 餐厅菜品展示界面，用于扫描之后开始点菜，也可以在餐厅详细信息界面手动点击"点菜"选项进入（用于用户远程预约）
+ * 主要用于扫描跳转，扫描跳转后需要使用扫描的到的 tableId 到服务器得到餐厅信息和餐桌状态，这时需要联判断
+ * 扫描跳转会附带餐桌编号， tableId， 如果有这个 tableId 则说明是来自餐桌点餐，则需要实时点餐模块配合完成
+ * 如果没有 tableId, (tableId=null), 则说明来自预约点餐
+ */
 public class RestaurantDishesListActivity extends ActionBarActivity implements ActionBar.TabListener {
 
     /**
@@ -46,6 +61,8 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
 
+    private String mTableId;
+    private String mRestaurantId;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -64,9 +81,51 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         // 暂时先随便添加一些东西
+//        Intent intent = getIntent();
+//        String res_id = intent.getStringExtra("res_id");
+//        actionBar.setTitle(res_id);
         Intent intent = getIntent();
-        String res_id = intent.getStringExtra("res_id");
-        actionBar.setTitle(res_id);
+
+
+        if (!ConnectivityUtil.isOnline(this)) {
+            // 提示网络连接错误
+            MyLog.d(TAG, "没有联网...");
+            ToastUtil.showShortToast(this, "网络连接错误，请检查网络环境！");
+        } else {
+            // 请求餐厅所有信息
+            // 如果过 intent 过来的信息中含有 table id 则开始使用 table id 请求餐厅信息，准备点餐的数据
+            if (intent.hasExtra("tid")) {
+                mTableId = intent.getStringExtra("tid");
+                RequestParams params = new RequestParams();
+                params.put("t_id", mTableId);
+                QRRHTTPClient.post(Constants.TABLE_TAKE_POST_URL, params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onStart() {
+                        MyLog.d(TAG, "Start to post tid to get restaurant info...");
+                        super.onStart();
+                    }
+
+                    @Override
+                    public void onSuccess(String content) {
+                        MyLog.d(TAG, "Success get rest info: " + content);
+                        Gson gson = new Gson();
+                        ScanResultVo scanResult = null;
+                        scanResult = gson.fromJson(content, ScanResultVo.class);
+                        if (null != scanResult) {
+                            MyLog.d(TAG, "Parse json out, restName: " + scanResult.getRest().getRest_name() + " and the dish: " + scanResult.getDishes().get(0).getDish().getDish_name());
+                        }
+
+                        super.onSuccess(content);
+                    }
+                });
+            } else if (intent.hasExtra("rid")) {
+                // 如果 intent 过来的信息中含有 restaurant id，意味着是点选餐厅进行点餐，直接使用 rid请求餐厅信息
+                // TODO: 使用餐厅 id 请求餐厅信息，准备预订点餐的信息
+            }
+
+        }
+
+        actionBar.setTitle("餐桌号：" + mTableId);
 
         // 添加返回箭头
         actionBar.setDisplayHomeAsUpEnabled(true);

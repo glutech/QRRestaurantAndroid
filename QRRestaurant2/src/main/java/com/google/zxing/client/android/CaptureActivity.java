@@ -69,6 +69,8 @@ import java.util.EnumSet;
 import java.util.Map;
 
 import cn.com.zdez.qrrestaurant.R;
+import cn.com.zdez.qrrestaurant.RestaurantDishesListActivity;
+import cn.com.zdez.qrrestaurant.utils.Constants;
 
 /**
  * This activity opens the camera and does the actual scanning on a background thread. It draws a
@@ -408,6 +410,16 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         lastResult = rawResult;
         ResultHandler resultHandler = ResultHandlerFactory.makeResultHandler(this, rawResult);
 
+        // 首先判定扫描结果是不是 zdez.qrrestaurant 的餐桌，如果使得话，就不用显示扫描结果，直接跳转到点餐界面
+        String resultStr = rawResult.getText();
+        if (resultStr.startsWith(Constants.PRE_QR_URL)) {
+            String tid = resultStr.substring(Constants.PRE_QR_URL.length(), resultStr.length());
+            Intent toRestraurantActivity = new Intent();
+            toRestraurantActivity.putExtra("tid", tid);
+            toRestraurantActivity.setClass(CaptureActivity.this, RestaurantDishesListActivity.class);
+            startActivity(toRestraurantActivity);
+        }
+
         boolean fromLiveScan = barcode != null;
         if (fromLiveScan) {
             historyManager.addHistoryItem(rawResult, resultHandler);
@@ -488,6 +500,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     // Put up our own UI for how to handle the decoded contents.
     private void handleDecodeInternally(Result rawResult, ResultHandler resultHandler, Bitmap barcode) {
+
+
         statusView.setVisibility(View.GONE);
         viewfinderView.setVisibility(View.GONE);
         resultView.setVisibility(View.VISIBLE);
