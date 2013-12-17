@@ -176,8 +176,8 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Intent intent = new Intent();
-                    intent.putExtra("res_id", list.get(i));
-                    intent.setClass(getActivity(), RestaurantDishesListActivity.class);
+                    intent.putExtra("tid", "2");
+                    intent.setClass(getActivity(), RestaurantDetailActivity.class);
                     startActivity(intent);
                 }
             });

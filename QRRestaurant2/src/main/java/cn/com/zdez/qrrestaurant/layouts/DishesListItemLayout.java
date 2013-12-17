@@ -11,6 +11,7 @@ import com.loopj.android.image.SmartImageView;
 
 import cn.com.zdez.qrrestaurant.R;
 import cn.com.zdez.qrrestaurant.entities.Dish;
+import cn.com.zdez.qrrestaurant.vo.DishVo;
 
 /**
  * Created by LuoHanLin on 13-12-5.
@@ -30,9 +31,9 @@ public class DishesListItemLayout extends RelativeLayout {
         this.context = context;
     }
 
-    public void setLayout(Dish dish, boolean isSelected) {
+    public void setLayout(DishVo dish, boolean isSelected) {
         findView();
-        tvTitle.setText(dish.getdName());
+        tvTitle.setText(dish.getDish().getDish_name());
         // Set background for display the selected dishes
 
         if(isSelected){

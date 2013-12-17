@@ -1,0 +1,177 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="cn.com.zdez.qrrestaurant.RestaurantDetailActivity$PlaceholderFragment">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:scrollbars="none"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:padding="10dp"
+                    android:id="@+id/tv_rest_info_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/abc_action_bar_title_text_size"
+                    android:text="日本料理" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.loopj.android.image.SmartImageView
+                        android:cropToPadding="true"
+                        android:layout_weight="1"
+                        android:src="@drawable/foodcover"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="false"
+                        android:scaleType="centerCrop"
+                        android:layout_width="wrap_content" />
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_marginLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_weight="3"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="扫描信息或者跳转信息" />
+
+                        <Button
+                            android:layout_width="match_parent"
+                            android:text="现场点餐"
+                            android:layout_height="wrap_content" />
+
+                        <Button
+                            android:id="@+id/btn_start_order"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="预订点餐" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginTop="16dp"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                    android:background="@color/blue_t"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:text="特色菜推荐"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:text="要哈考试的见风使舵就咖啡精神可嘉地方肯德基开放时间快递费几十块大姐夫可视对讲付款守空房几点上课减肥大姐夫啊快速减肥快速减肥看电视剧开房间上岛咖啡街道口积分卡四大皆空附近的"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginTop="16dp"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                    android:background="@color/blue_t"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:text="网友评论"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:text="要哈考试的见风使舵就咖啡精神可嘉地方肯德基开放时间快递费几十块大姐夫可视对讲付款守空房几点上课减肥大姐夫啊快速减肥快速减肥看电视剧开房间上岛咖啡街道口积分卡四大皆空附近的"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginTop="16dp"
+                    android:padding="10dp"
+                    android:orientation="vertical"
+                    android:background="@color/blue_t"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:text="餐厅基本信息"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:text="要哈考试的见风使舵就咖啡精神可嘉地方肯德基开放时间快递费几十块大姐夫可视对讲付款守空房几点上课减肥大姐夫啊快速减肥快速减肥看电视剧开房间上岛咖啡街道口积分卡四大皆空附近的"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp">
+
+                    </LinearLayout>
+
+
+
+            </LinearLayout>
+
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            android:background="@color/purple_t"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btn_comment_rest"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:text="添加评论"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:text="添加图片"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:text="随便写点"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </FrameLayout>
+
+</RelativeLayout>

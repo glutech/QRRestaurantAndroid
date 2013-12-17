@@ -11,16 +11,17 @@ import java.util.List;
 import cn.com.zdez.qrrestaurant.R;
 import cn.com.zdez.qrrestaurant.entities.Dish;
 import cn.com.zdez.qrrestaurant.layouts.DishesListItemLayout;
+import cn.com.zdez.qrrestaurant.vo.DishVo;
 
 /**
  * Created by LuoHanLin on 13-12-6.
  */
-public class DishesListAdapter extends ArrayAdapter<Dish> {
+public class DishesListAdapter extends ArrayAdapter<DishVo> {
 
     private Context context;
     private HashMap<Integer, Boolean> mSelection = new HashMap<Integer, Boolean>();
 
-    public DishesListAdapter(Context context, int resource, List<Dish> objects) {
+    public DishesListAdapter(Context context, int resource, List<DishVo> objects) {
         super(context, resource, objects);
         this.context = context;
     }

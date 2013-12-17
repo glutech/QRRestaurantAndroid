@@ -69,6 +69,7 @@ import java.util.EnumSet;
 import java.util.Map;
 
 import cn.com.zdez.qrrestaurant.R;
+import cn.com.zdez.qrrestaurant.RestaurantDetailActivity;
 import cn.com.zdez.qrrestaurant.RestaurantDishesListActivity;
 import cn.com.zdez.qrrestaurant.utils.Constants;
 

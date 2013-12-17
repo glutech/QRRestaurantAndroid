@@ -3,6 +3,8 @@ package cn.com.zdez.qrrestaurant.websockets;
 import android.content.Context;
 import android.util.Log;
 
+import cn.com.zdez.qrrestaurant.QRRestaurantApplication;
+import cn.com.zdez.qrrestaurant.account.AccountManager;
 import cn.com.zdez.qrrestaurant.utils.Constants;
 import cn.com.zdez.qrrestaurant.utils.ToastUtil;
 import de.tavendo.autobahn.WebSocketConnection;
@@ -15,12 +17,14 @@ import de.tavendo.autobahn.WebSocketHandler;
 public class WSConnection {
     private static final String TAG = WSConnection.class.getSimpleName();
     private static final String BASE_WSURL = "ws://192.168.199.112:8080/qr_restaurant/wsservlet/WSOrderWSServlet";
+    private AccountManager accountManager;
 
     public Context context;
     private static WSConnection instance;
     public static WebSocketConnection mConnection;
 
     private WSConnection(Context context) {
+        accountManager = QRRestaurantApplication.accountManager;
         mConnection = new WebSocketConnection();
         this.context = context;
     }
@@ -33,8 +37,8 @@ public class WSConnection {
         return instance;
     }
 
-    public void connect(long tid, long uid) {
-        final String wsurl = Constants.WEBSOCKET_BASE_URL + Constants.ORDERING_MODULE_WS_URL + "?tid=" + String.valueOf(tid) + "&uid=" + String.valueOf(uid);
+    public void connect(String tid) {
+        final String wsurl = Constants.WEBSOCKET_BASE_URL + Constants.ORDERING_MODULE_WS_URL + "?tid=" + String.valueOf(tid) + "&uid=" + String.valueOf(accountManager.mUserId);
         try {
             mConnection.connect(wsurl, new WebSocketHandler() {
 

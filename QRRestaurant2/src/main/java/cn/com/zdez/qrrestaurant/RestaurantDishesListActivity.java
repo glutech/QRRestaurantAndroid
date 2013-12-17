@@ -1,6 +1,10 @@
 package cn.com.zdez.qrrestaurant;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -28,20 +33,21 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-import cn.com.zdez.qrrestaurant.entities.Dish;
+import cn.com.zdez.qrrestaurant.account.AccountManager;
 import cn.com.zdez.qrrestaurant.entities.DishesSelectList;
 import cn.com.zdez.qrrestaurant.http.QRRHTTPClient;
+import cn.com.zdez.qrrestaurant.model.Category;
 import cn.com.zdez.qrrestaurant.utils.ConnectivityUtil;
 import cn.com.zdez.qrrestaurant.utils.Constants;
+import cn.com.zdez.qrrestaurant.utils.DishesByCategorySectionPagerAdapter;
 import cn.com.zdez.qrrestaurant.utils.DishesListAdapter;
-import cn.com.zdez.qrrestaurant.utils.MakeUpRobot;
 import cn.com.zdez.qrrestaurant.utils.MyLog;
 import cn.com.zdez.qrrestaurant.utils.ToastUtil;
+import cn.com.zdez.qrrestaurant.vo.DishVo;
 import cn.com.zdez.qrrestaurant.vo.ScanResultVo;
-import cn.com.zdez.qrrestaurant.websockets.WSConnection;
-import de.tavendo.autobahn.WebSocketConnection;
 
 /**
  * 餐厅菜品展示界面，用于扫描之后开始点菜，也可以在餐厅详细信息界面手动点击"点菜"选项进入（用于用户远程预约）
@@ -61,8 +67,17 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
 
-    private String mTableId;
-    private String mRestaurantId;
+    private boolean mToggleIndeterminate = false;
+
+    private static String mTableId;
+    private static String mRestaurantId;
+    private View mProgressView;
+    ActionBar actionBar = null;
+    private AccountManager accountMagager;
+    private static ScanResultVo scanResult = null;
+    private static ListView dishesListView;
+    private static DishesListAdapter dishesListAdapter;
+    private static List<DishVo> dishList = new ArrayList<DishVo>();
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -73,63 +88,17 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_restaurant_dishes_list);
 
 
+
         // Set up the action bar.
-        final ActionBar actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        // 暂时先随便添加一些东西
-//        Intent intent = getIntent();
-//        String res_id = intent.getStringExtra("res_id");
-//        actionBar.setTitle(res_id);
-        Intent intent = getIntent();
-
-
-        if (!ConnectivityUtil.isOnline(this)) {
-            // 提示网络连接错误
-            MyLog.d(TAG, "没有联网...");
-            ToastUtil.showShortToast(this, "网络连接错误，请检查网络环境！");
-        } else {
-            // 请求餐厅所有信息
-            // 如果过 intent 过来的信息中含有 table id 则开始使用 table id 请求餐厅信息，准备点餐的数据
-            if (intent.hasExtra("tid")) {
-                mTableId = intent.getStringExtra("tid");
-                RequestParams params = new RequestParams();
-                params.put("t_id", mTableId);
-                QRRHTTPClient.post(Constants.TABLE_TAKE_POST_URL, params, new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onStart() {
-                        MyLog.d(TAG, "Start to post tid to get restaurant info...");
-                        super.onStart();
-                    }
-
-                    @Override
-                    public void onSuccess(String content) {
-                        MyLog.d(TAG, "Success get rest info: " + content);
-                        Gson gson = new Gson();
-                        ScanResultVo scanResult = null;
-                        scanResult = gson.fromJson(content, ScanResultVo.class);
-                        if (null != scanResult) {
-                            MyLog.d(TAG, "Parse json out, restName: " + scanResult.getRest().getRest_name() + " and the dish: " + scanResult.getDishes().get(0).getDish().getDish_name());
-                        }
-
-                        super.onSuccess(content);
-                    }
-                });
-            } else if (intent.hasExtra("rid")) {
-                // 如果 intent 过来的信息中含有 restaurant id，意味着是点选餐厅进行点餐，直接使用 rid请求餐厅信息
-                // TODO: 使用餐厅 id 请求餐厅信息，准备预订点餐的信息
-            }
-
-        }
-
-        actionBar.setTitle("餐桌号：" + mTableId);
-
-        // 添加返回箭头
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
+        // 账户管理
+        accountMagager = QRRestaurantApplication.accountManager;
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -137,6 +106,23 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
+
+
+//        // 显示正在加载的界面
+//        showProgress(true);
+
+        // 加载餐厅信息和菜品
+        loadRestaurantInfo();
+
+        actionBar.setTitle("餐桌号：" + mTableId);
+
+        // 添加返回箭头
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void setFragmentPagerTitle(List<Category> cats) {
+        mSectionsPagerAdapter.setCats(cats);
+
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         // When swiping between different sections, select the corresponding
@@ -162,6 +148,78 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         }
     }
 
+    /**
+     * 根据 activity 跳转所携带的信息决定当前 activity 所处的上下文（是扫描点餐还是选择点餐）
+     * 从而加载数据
+     */
+    private void loadRestaurantInfo() {
+        Intent intent = getIntent();
+
+        if (!ConnectivityUtil.isOnline(this)) {
+            // 提示网络连接错误
+            MyLog.d(TAG, "没有联网...");
+            ToastUtil.showShortToast(this, "网络连接错误，请检查网络环境！");
+        } else {
+            // 请求餐厅所有信息
+            // 如果过 intent 过来的信息中含有 table id 则开始使用 table id 请求餐厅信息，准备点餐的数据
+            if (intent.hasExtra("tid")) {
+
+                // 转圈圈
+                mToggleIndeterminate = !mToggleIndeterminate;
+                setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+                setSupportProgressBarIndeterminate(true);
+
+                mTableId = intent.getStringExtra("tid");
+                RequestParams params = new RequestParams();
+                params.put("t_id", mTableId);
+                QRRHTTPClient.post(Constants.TABLE_TAKE_POST_URL, params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onStart() {
+                        MyLog.d(TAG, "Start to post tid to get restaurant info...");
+                        super.onStart();
+                    }
+
+                    @Override
+                    public void onSuccess(String content) {
+                        MyLog.d(TAG, "Success get rest info: " + content);
+                        // 成功从服务器请求到餐厅信息 json 数据
+                        Gson gson = new Gson();
+
+                        scanResult = gson.fromJson(content, ScanResultVo.class);
+                        if (null != scanResult) {
+                            // json 数据反序列化成功，得到扫描结果实体，开始填充菜品列表详细数据
+                            MyLog.d(TAG, "Parse json out, restName: " + scanResult.getRest().getRest_name() + " and the dish: " + scanResult.getDishes().get(0).getDish().getDish_name());
+                        }
+
+                        // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
+                        List<Category> cats = new ArrayList<Category>();
+                        for (DishVo dishVo : scanResult.getDishes()) {
+                            cats.add(dishVo.getCat());
+                        }
+
+                        mToggleIndeterminate = !mToggleIndeterminate;
+                        setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+
+                        setFragmentPagerTitle(cats);
+
+                        // 然后更新 list
+                        dishList.clear();
+                        dishList.addAll(scanResult.getDishes());
+                        dishesListAdapter.notifyDataSetChanged();
+
+
+                        super.onSuccess(content);
+
+                    }
+                });
+            } else if (intent.hasExtra("rid")) {
+                // 如果 intent 过来的信息中含有 restaurant id，意味着是点选餐厅进行点餐，直接使用 rid请求餐厅信息
+                // TODO: 使用餐厅 id 请求餐厅信息，准备预订点餐的信息
+            }
+
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -183,7 +241,14 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                 // This is called when the Home (Up) button is pressed in the action bar.
                 // Create a simple intent that starts the hierarchical parent activity and
                 // use NavUtils in the Support Package to ensure proper handling of Up.
-                Intent upIntent = new Intent(this, RestaurantChooserActivity.class);
+                // 由 Table ID 是否存在来决定 parentActivity 是那个
+                Intent upIntent;
+                if(mTableId != null){
+                    upIntent = new Intent(this, QRRMainActivity.class);
+                }else{
+                    upIntent = new Intent(this, RestaurantDetailActivity.class);
+                }
+
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     // This activity is not part of the application's task, so create a new task
                     // with a synthesized back stack.
@@ -223,8 +288,14 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+        private List<Category> cats;
+
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
+        }
+
+        public void setCats(List<Category> cats) {
+            this.cats = cats;
         }
 
         @Override
@@ -237,7 +308,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 5;
+            return cats.size() + 2;
         }
 
         @Override
@@ -245,18 +316,14 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             Locale l = Locale.getDefault();
             switch (position) {
                 case 0:
-                    return getString(R.string.pages_title1).toUpperCase(l);
+                    return getString(R.string.pages_default_title1).toUpperCase(l);
                 case 1:
-                    return getString(R.string.pages_title2).toUpperCase(l);
-                case 2:
-                    return getString(R.string.pages_title3).toUpperCase(l);
-                case 3:
-                    return getString(R.string.pages_title4).toUpperCase(l);
-                case 4:
-                    return getString(R.string.pages_title5).toUpperCase(l);
+                    return getString(R.string.pages_default_title2).toUpperCase(l);
+                default:
+                    return cats.get(position - 2).getCat_name();
 
             }
-            return null;
+//            return null;
         }
     }
 
@@ -272,7 +339,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
 
         // 测试用的 websocket connection
-        WebSocketConnection mConnection;
+//        WebSocketConnection mConnection;
 
 
         /**
@@ -296,18 +363,16 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             View rootView = inflater.inflate(R.layout.fragment_restaurant_dishes_list, container, false);
 //            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 //            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-            ListView dishesList = (ListView) rootView.findViewById(R.id.plates_list_view);
-            dishesList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+            dishesListView = (ListView) rootView.findViewById(R.id.plates_list_view);
+            dishesListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
             final Button btnSelectedCounter = (Button) rootView.findViewById(R.id.btn_selected_counter);
             btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
 
 
             // 测试用，在此模拟在某张餐桌上点餐的操作
             // 首先，建立到服务器餐桌上的 ws 连接
-            long uid = 100;
-            long tid = 13;
-            WSConnection.getInstance(getActivity()).connect(tid, uid);
-            mConnection = WSConnection.getInstance(getActivity()).mConnection;
+//            WSConnection.getInstance(getActivity()).connect(mTableId);
+//            mConnection = WSConnection.getInstance(getActivity()).mConnection;
 
 //            final ArrayList<String> list = new ArrayList<String>();
 //            String tempStr = "";
@@ -327,7 +392,24 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 //                list.add(tempStr + "_" + i);
 //            }
 
-            dishesList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            // 按分类更新当前 pager 的列表
+            switch (getArguments().getInt(ARG_SECTION_NUMBER)){
+                case 1:
+                    // 推荐菜品
+                    MyLog.d(TAG, "Switch to pager 1");
+                    break;
+                case 2:
+                    // 点击排行菜品
+                    MyLog.d(TAG, "Switch to pager 2");
+                    break;
+                default:
+                    // 剩下的是按照菜品分类
+                    MyLog.d(TAG, "Switch to pager" + getArguments().getInt(ARG_SECTION_NUMBER));
+
+                    break;
+            }
+
+            dishesListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
                 @Override
                 public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
@@ -356,15 +438,18 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             });
 
 
-            final ArrayList<Dish> dishes = MakeUpRobot.getDishes();
-            final DishesListAdapter dishesListAdapter = new DishesListAdapter(getActivity(), R.id.plates_list_view, dishes);
-            dishesList.setAdapter(dishesListAdapter);
+            dishesListAdapter = new DishesListAdapter(getActivity(), R.id.plates_list_view, dishList);
+            dishesListView.setAdapter(dishesListAdapter);
 
-//            dishesList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-//            dishesList.setItemsCanFocus(false);
-//            dishesList.setClickable(true);
+//            final ArrayList<Dish> dishes = MakeUpRobot.getDishes();
+//            final DishesListAdapter dishesListAdapter = new DishesListAdapter(getActivity(), R.id.plates_list_view, dishes);
+//            dishesList.setAdapter(dishesListAdapter);
 
-            dishesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            dishesListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+            dishesListView.setItemsCanFocus(false);
+            dishesListView.setClickable(true);
+
+            dishesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                     MyLog.d(TAG, "Item with index " + position + "clicked");
@@ -384,17 +469,17 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
 
                     dishesListAdapter.addNewSelection(position, !dishesListAdapter.isSelected(position));
-                    String selectItem = dishes.get(position).getdName();
+                    String selectItem = dishList.get(position).getDish().getDish_name();
 
                     if (!dishesListAdapter.isSelected(position)) {
                         Toast.makeText(getActivity(), "取消" + selectItem, Toast.LENGTH_SHORT).show();
                         DishesSelectList.remove(selectItem);
-                        mConnection.sendTextMessage("delete " + String.valueOf(position));
+//                        mConnection.sendTextMessage("delete " + String.valueOf(position));
                         btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
                     } else {
                         DishesSelectList.add(selectItem);
                         Toast.makeText(getActivity(), "已将" + selectItem + "放入菜单", Toast.LENGTH_SHORT).show();
-                        mConnection.sendTextMessage("add " + String.valueOf(position));
+//                        mConnection.sendTextMessage("add " + String.valueOf(position));
                         btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
                     }
                 }
@@ -414,7 +499,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
         @Override
         public void onDestroy() {
-            mConnection.disconnect();
+//            mConnection.disconnect();
             super.onDestroy();
         }
     }

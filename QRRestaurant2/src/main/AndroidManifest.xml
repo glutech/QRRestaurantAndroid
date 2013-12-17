@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cn.com.zdez.qrrestaurant"
     android:versionCode="1"
-    android:versionName="1.0">
+    android:versionName="1.0" >
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -24,10 +24,10 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name="cn.com.zdez.qrrestaurant.WelcomeActivity"
-            android:label="@string/title_activity_welcome">
+            android:label="@string/title_activity_welcome" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,37 +37,36 @@
         <activity
             android:name="cn.com.zdez.qrrestaurant.QRRMainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
-
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="cn.com.zdez.qrrestaurant.RestaurantChooserActivity"
             android:label="@string/title_activity_restaurant_chooser"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
         <activity
             android:name="cn.com.zdez.qrrestaurant.RestaurantSearchResultsActivity"
-            android:label="@string/title_activity_restaurant_search_results">
+            android:label="@string/title_activity_restaurant_search_results" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
         <activity
             android:name="cn.com.zdez.qrrestaurant.RestaurantDishesListActivity"
-            android:label="@string/title_activity_restaurant_plate_list"></activity>
+            android:label="@string/title_activity_restaurant_plate_list" />
         <activity
             android:name="cn.com.zdez.qrrestaurant.DishesSelectedListActivity"
-            android:label="@string/title_activity_plates_selected_list"></activity>
+            android:label="@string/title_activity_plates_selected_list" />
         <activity
             android:name="com.google.zxing.client.android.PreferencesActivity"
             android:label="@string/preferences_name"
-            android:stateNotNeeded="true"></activity>
+            android:stateNotNeeded="true" />
         <activity
             android:name="com.google.zxing.client.android.encode.EncodeActivity"
-            android:stateNotNeeded="true">
+            android:stateNotNeeded="true" >
             <intent-filter>
                 <action android:name="com.google.zxing.client.android.ENCODE" />
 
@@ -95,7 +94,7 @@
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/sbc_name"
             android:screenOrientation="landscape"
-            android:stateNotNeeded="true">
+            android:stateNotNeeded="true" >
             <intent-filter>
                 <action android:name="com.google.zxing.client.android.SEARCH_BOOK_CONTENTS" />
 
@@ -105,7 +104,7 @@
         <activity
             android:name="com.google.zxing.client.android.share.ShareActivity"
             android:screenOrientation="user"
-            android:stateNotNeeded="true">
+            android:stateNotNeeded="true" >
             <intent-filter>
                 <action android:name="com.google.zxing.client.android.SHARE" />
 
@@ -115,7 +114,7 @@
         <activity
             android:name="com.google.zxing.client.android.history.HistoryActivity"
             android:label="@string/history_title"
-            android:stateNotNeeded="true">
+            android:stateNotNeeded="true" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -125,7 +124,7 @@
         <activity
             android:name="com.google.zxing.client.android.share.BookmarkPickerActivity"
             android:label="@string/bookmark_picker_name"
-            android:stateNotNeeded="true">
+            android:stateNotNeeded="true" >
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
 
@@ -136,7 +135,7 @@
             android:name="com.google.zxing.client.android.share.AppPickerActivity"
             android:configChanges="orientation"
             android:label="@string/app_picker_name"
-            android:stateNotNeeded="true">
+            android:stateNotNeeded="true" >
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
 
@@ -145,7 +144,7 @@
         </activity>
         <activity
             android:name="com.google.zxing.client.android.HelpActivity"
-            android:screenOrientation="user">
+            android:screenOrientation="user" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -159,7 +158,7 @@
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
             android:theme="@style/CaptureTheme"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            android:windowSoftInputMode="stateAlwaysHidden" >
             <intent-filter>
                 <action android:name="com.google.zxing.client.android.SCAN" />
 
@@ -214,7 +213,10 @@
                     android:scheme="zxing" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name="cn.com.zdez.qrrestaurant.RestaurantDetailActivity"
+            android:label="@string/title_activity_restaurant_detail" >
+        </activity>
     </application>
 
 </manifest>

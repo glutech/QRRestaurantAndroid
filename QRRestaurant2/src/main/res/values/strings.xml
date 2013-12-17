@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">无线点餐</string>
+    <string name="app_name">二维码点餐</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">设置</string>
     <string name="menu_title">扫描二维码</string>
@@ -9,11 +9,8 @@
     <string name="title_section1">附近餐馆</string>
     <string name="title_section2">推荐餐馆</string>
     <string name="title_section3">看过的餐馆</string>
-    <string name="pages_title1">推荐菜品</string>
-    <string name="pages_title2">主食</string>
-    <string name="pages_title3">炒菜</string>
-    <string name="pages_title4">汤类</string>
-    <string name="pages_title5">凉菜</string>
+    <string name="pages_default_title1">推荐菜品</string>
+    <string name="pages_default_title2">排行</string>
     <string name="title_activity_restaurant_search_results">搜索结果</string>
     <string name="search_title">搜索标题</string>
     <string name="search_hint">搜索提示</string>
@@ -137,6 +134,7 @@
     <string name="wifi_changing_network">请求连接到网络\u2026</string>
     <string name="wifi_ssid_label">网络SSID</string>
     <string name="wifi_type_label">类型</string>
-    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="title_activity_welcome">二维码点餐</string>
+    <string name="title_activity_restaurant_detail">餐厅信息</string>
 
 </resources>
