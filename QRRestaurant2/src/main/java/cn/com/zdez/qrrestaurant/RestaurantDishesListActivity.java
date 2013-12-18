@@ -26,6 +26,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -78,6 +79,9 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     private static ListView dishesListView;
     private static DishesListAdapter dishesListAdapter;
     private static List<DishVo> dishList = new ArrayList<DishVo>();
+    private TextView tvAlert;
+
+    public static Button btnSelectedCounter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -91,7 +95,8 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_restaurant_dishes_list);
 
-
+        tvAlert = (TextView) findViewById(R.id.tv_alert_dishlist);
+        btnSelectedCounter = (Button) findViewById(R.id.btn_selected_counter);
 
         // Set up the action bar.
         actionBar = getSupportActionBar();
@@ -177,6 +182,20 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                     public void onStart() {
                         MyLog.d(TAG, "Start to post tid to get restaurant info...");
                         super.onStart();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable error, String content) {
+                        MyLog.d(TAG, "请求餐厅信息失败 ：" + content);
+                        // 停止progress
+                        mToggleIndeterminate = !mToggleIndeterminate;
+                        setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+
+                        // 显示错误信息
+                        tvAlert.setText("服务连接出错，请稍候再试...");
+                        tvAlert.setVisibility(View.VISIBLE);
+
+                        super.onFailure(error, content);
                     }
 
                     @Override
@@ -365,8 +384,8 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 //            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
             dishesListView = (ListView) rootView.findViewById(R.id.plates_list_view);
             dishesListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-            final Button btnSelectedCounter = (Button) rootView.findViewById(R.id.btn_selected_counter);
-            btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
+//            final Button btnSelectedCounter = (Button) rootView.findViewById(R.id.btn_selected_counter);
+//            btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
 
 
             // 测试用，在此模拟在某张餐桌上点餐的操作

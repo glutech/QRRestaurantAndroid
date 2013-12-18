@@ -7,6 +7,10 @@
     <color name="green_light">#99CC00</color>
     <color name="purple">#9933CC</color>
     <color name="purple_light">#AA66CC</color>
+    <color name="orange">#FF8800</color>
+    <color name="orange_light">#FFBB33</color>
+    <color name="red">#CC0000</color>
+    <color name="red_light">#FF4444</color>
 
     <color name="blue_t">#900099CC</color>
     <color name="blue_light_t">#9033B5E5</color>
@@ -15,6 +19,10 @@
     <color name="purple_t">#909933CC</color>
     <color name="purple_light_t">#90AA66CC</color>
     <color name="green_t_30">#30669900</color>
+    <color name="orange_t_50">#50FF8800</color>
+    <color name="orange_light_t_80">#80FFBB33</color>
+    <color name="red_t_50">#50CC0000</color>
+    <color name="red_light_t_80">#80FF4444</color>
 
     <color name="contents_text">#ff000000</color>
     <color name="encode_view">#ffffffff</color>

@@ -1,7 +1,36 @@
-<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/pager"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".RestaurantPlateListActivity" />
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_alert_dishlist"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/red_light_t_80"
+        android:text="提示消息"
+        android:padding="5sp"
+        android:visibility="gone" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".RestaurantPlateListActivity" />
+
+    <Button
+        android:id="@+id/btn_selected_counter"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:padding="10dp"
+        android:background="@drawable/btn_bg_green"
+        android:text="请选择" />
+
+
+</FrameLayout>
+
+
+
 

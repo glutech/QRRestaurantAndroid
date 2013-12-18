@@ -40,6 +40,7 @@ public class ToastUtil {
 		showToast(context.getApplicationContext(), resId, Toast.LENGTH_LONG);
 	}
 
+
 	private static void showToast(Context context, CharSequence msg,
 			int duration) {
 		try {
