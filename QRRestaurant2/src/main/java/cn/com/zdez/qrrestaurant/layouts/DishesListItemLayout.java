@@ -1,7 +1,6 @@
 package cn.com.zdez.qrrestaurant.layouts;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -10,8 +9,9 @@ import android.widget.TextView;
 import com.loopj.android.image.SmartImageView;
 
 import cn.com.zdez.qrrestaurant.R;
-import cn.com.zdez.qrrestaurant.entities.Dish;
-import cn.com.zdez.qrrestaurant.vo.DishVo;
+import cn.com.zdez.qrrestaurant.helper.RestaurantWaitressGirl;
+import cn.com.zdez.qrrestaurant.model.Dish;
+import cn.com.zdez.qrrestaurant.utils.MyLog;
 
 /**
  * Created by LuoHanLin on 13-12-5.
@@ -31,12 +31,13 @@ public class DishesListItemLayout extends RelativeLayout {
         this.context = context;
     }
 
-    public void setLayout(DishVo dish, boolean isSelected) {
+    public void setLayout(Dish dish) {
         findView();
-        tvTitle.setText(dish.getDish().getDish_name());
+        tvTitle.setText(dish.getDish_name());
         // Set background for display the selected dishes
 
-        if(isSelected){
+        if(RestaurantWaitressGirl.isSelected(dish.getDish_id())){
+            MyLog.d(TAG, dish.getDish_name() +  " got selection:" + RestaurantWaitressGirl.isSelected(dish.getDish_id()));
             setBackgroundColor(getResources().getColor(R.color.blue_light_t));
         }
     }

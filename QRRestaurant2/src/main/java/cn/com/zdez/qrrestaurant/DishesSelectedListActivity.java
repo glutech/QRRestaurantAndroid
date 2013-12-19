@@ -12,10 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import cn.com.zdez.qrrestaurant.entities.DishesSelectList;
 
 public class DishesSelectedListActivity extends ActionBarActivity {
 
@@ -92,8 +90,8 @@ public class DishesSelectedListActivity extends ActionBarActivity {
 
             ListView selectedPlateList = (ListView) rootView.findViewById(R.id.plates_selected_list_view);
 
-            selectedPlateList.setAdapter(new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1, DishesSelectList.plateList));
+//            selectedPlateList.setAdapter(new ArrayAdapter<String>(getActivity(),
+//                    android.R.layout.simple_list_item_1, DishesSelectList.plateList));
 
             return rootView;
         }

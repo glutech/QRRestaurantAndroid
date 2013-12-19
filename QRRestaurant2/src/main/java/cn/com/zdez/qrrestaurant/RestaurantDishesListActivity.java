@@ -1,10 +1,6 @@
 package cn.com.zdez.qrrestaurant;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -36,25 +32,16 @@ import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import cn.com.zdez.qrrestaurant.account.AccountManager;
-import cn.com.zdez.qrrestaurant.entities.DishesSelectList;
+import cn.com.zdez.qrrestaurant.helper.RestaurantWaitressGirl;
 import cn.com.zdez.qrrestaurant.http.QRRHTTPClient;
-import cn.com.zdez.qrrestaurant.model.Category;
+import cn.com.zdez.qrrestaurant.model.Dish;
 import cn.com.zdez.qrrestaurant.utils.ConnectivityUtil;
 import cn.com.zdez.qrrestaurant.utils.Constants;
-import cn.com.zdez.qrrestaurant.utils.DishesByCategorySectionPagerAdapter;
 import cn.com.zdez.qrrestaurant.utils.DishesListAdapter;
 import cn.com.zdez.qrrestaurant.utils.MyLog;
-import cn.com.zdez.qrrestaurant.utils.ToastUtil;
-import cn.com.zdez.qrrestaurant.vo.DishVo;
-import cn.com.zdez.qrrestaurant.vo.RestaurantHelper;
-import cn.com.zdez.qrrestaurant.vo.ScanResultVo;
+import cn.com.zdez.qrrestaurant.vo.DishesVo;
 
 /**
  * 餐厅菜品展示界面，用于扫描之后开始点菜，也可以在餐厅详细信息界面手动点击"点菜"选项进入（用于用户远程预约）
@@ -81,17 +68,16 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     private View mProgressView;
     ActionBar actionBar = null;
     private AccountManager accountMagager;
-    private static ScanResultVo scanResult = null;
-    private static ListView dishesListView;
-    private static DishesListAdapter dishesListAdapter;
-    private static List<DishVo> dishList = new ArrayList<DishVo>();
+    private static DishesVo dishesVo = null;
+
+
     private TextView tvAlert;
-    RestaurantHelper rh;
+    public static RestaurantWaitressGirl rh;
     public static TextView tvOrderMssage;
 
     public static Button btnSelectedCounter;
 
-    public static int TIME = 1000;
+    public static int TIME = 800;
     public static Handler handler = new Handler();
     public static Runnable runnable;
 
@@ -119,10 +105,10 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         runnable = new Runnable() {
             @Override
             public void run() {
-                try{
+                try {
                     MyLog.d(TAG, "Got the runnable work finally");
                     tvOrderMssage.setVisibility(View.GONE);
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -132,9 +118,6 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         // 账户管理
         accountMagager = QRRestaurantApplication.accountManager;
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -150,33 +133,6 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setFragmentPagerTitle() {
-        mSectionsPagerAdapter.setCats(rh.catedDishMap.keySet());
-
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-            }
-        });
-
-        // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
-        }
-    }
 
     /**
      * 根据 activity 跳转所携带的信息决定当前 activity 所处的上下文（是扫描点餐还是选择点餐）
@@ -206,7 +162,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                 mTableId = intent.getStringExtra("tid");
                 RequestParams params = new RequestParams();
                 params.put("t_id", mTableId);
-                QRRHTTPClient.post(Constants.TABLE_TAKE_POST_URL, params, new AsyncHttpResponseHandler() {
+                QRRHTTPClient.post(Constants.SCAN_TO_ORDER, params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onStart() {
                         MyLog.d(TAG, "Start to post tid to get restaurant info...");
@@ -233,14 +189,14 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                         // 成功从服务器请求到餐厅信息 json 数据
                         Gson gson = new Gson();
 
-                        scanResult = gson.fromJson(content, ScanResultVo.class);
-                        if (null != scanResult) {
+                        dishesVo = gson.fromJson(content, DishesVo.class);
+                        if (null != dishesVo) {
                             // json 数据反序列化成功，得到扫描结果实体，开始填充菜品列表详细数据
-                            MyLog.d(TAG, "Parse json out, restName: " + scanResult.getRest().getRest_name() + " and the dish: " + scanResult.getDishes().get(0).getDish().getDish_name());
+                            MyLog.d(TAG, "Parse json out, restName: " + dishesVo.getRest_name() + " and the dish: " + dishesVo.getDishlist().get(0).getDish_name());
                         }
 
                         // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
-                        rh = RestaurantHelper.getInstance(scanResult);
+                        rh = RestaurantWaitressGirl.getInstance(dishesVo);
 
                         mToggleIndeterminate = !mToggleIndeterminate;
                         setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
@@ -248,13 +204,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                         setFragmentPagerTitle();
 
                         // 设置标题
-                        actionBar.setTitle(scanResult.getRest().getRest_name());
-
-                        // 然后更新 list
-                        dishList.clear();
-                        dishList.addAll(scanResult.getDishes());
-                        dishesListAdapter.notifyDataSetChanged();
-
+                        actionBar.setTitle(dishesVo.getRest_name());
 
                         super.onSuccess(content);
 
@@ -268,10 +218,214 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         }
     }
 
+    private void setFragmentPagerTitle() {
+
+        // 初始化 pagerAdapter
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        // When swiping between different sections, select the corresponding
+        // tab. We can also use ActionBar.Tab#select() to do this if we have
+        // a reference to the Tab.
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                MyLog.d(TAG, "ViewPager's page change listener, now selected: " + position);
+                actionBar.setSelectedNavigationItem(position);
+            }
+        });
+
+        // For each of the sections in the app, add a tab to the action bar.
+        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+            // Create a tab with text corresponding to the page title defined by
+            // the adapter. Also specify this Activity object, which implements
+            // the TabListener interface, as the callback (listener) for when
+            // this tab is selected.
+            actionBar.addTab(
+                    actionBar.newTab()
+                            .setText(mSectionsPagerAdapter.getPageTitle(i))
+                            .setTabListener(this));
+        }
+    }
+
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            // getItem is called to instantiate the fragment for the given page.
+            // Return a PlaceholderFragment (defined as a static inner class below).
+            return PlaceholderFragment.newInstance(position + 1);
+        }
+
+        @Override
+        public int getCount() {
+            return rh.categoryNameArray.length;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return rh.categoryNameArray[position];
+        }
+    }
+
+    /**
+     * A placeholder fragment containing a simple view.
+     */
+    public static class PlaceholderFragment extends Fragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+
+        ListView dishesListView;
+        DishesListAdapter dishesListAdapter;
+        List<Dish> dishList;
+        String tableName;
+
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static PlaceholderFragment newInstance(int sectionNumber) {
+            PlaceholderFragment fragment = new PlaceholderFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        public PlaceholderFragment() {
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            tableName = rh.categoryNameArray[getArguments().getInt(ARG_SECTION_NUMBER) - 1];
+            MyLog.d(TAG, "Oncreateview while create placeholder fragment and it's section is: " + getArguments().getInt(ARG_SECTION_NUMBER) + " and the cate name is : " + tableName);
+
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_restaurant_dishes_list, container, false);
+
+            MyLog.d(TAG, "---------------------on Fragment create view----------------------+" + tableName);
+            dishList = new ArrayList<Dish>(rh.catedDishMap.get(rh.categoryNameArray[getArguments().getInt(ARG_SECTION_NUMBER) - 1]));
+            dishesListAdapter = new DishesListAdapter(getActivity(), R.id.plates_list_view, dishList);
+
+            dishesListView = (ListView) rootView.findViewById(R.id.plates_list_view);
+            dishesListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+            dishesListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+                @Override
+                public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
+                    Toast.makeText(getActivity(), i + " item checkedstate changed ", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                    return false;
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                    return false;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                    return false;
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode actionMode) {
+
+                }
+            });
+
+            dishesListView.setAdapter(dishesListAdapter);
+
+            dishesListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+            dishesListView.setItemsCanFocus(false);
+            dishesListView.setClickable(true);
+
+            // 列表点击事件，处理菜单选择操作
+            dishesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    MyLog.d(TAG, "Item with index " + position + "clicked");
+
+
+                    String selectItem = dishList.get(position).getDish_name();
+
+                    if (rh.isSelected(dishList.get(position).getDish_id())) {
+                        // 之前又被点选过，所以现在去除
+                        int left = rh.removeSelection(dishList.get(position).getDish_id());
+
+                        // 自定义 TextView,具体点选提示
+                        if (left > 0) {
+                            tvOrderMssage.setText("将" + selectItem + "的数量减少1");
+                        } else {
+                            tvOrderMssage.setText("取消" + selectItem);
+                        }
+
+                        tvOrderMssage.setVisibility(View.VISIBLE);
+                        handler.postDelayed(runnable, TIME);
+
+//                        mConnection.sendTextMessage("delete " + String.valueOf(position));
+                        // 统计按钮中增加数目
+                        btnSelectedCounter.setText("已点：" + rh.totalSelection());
+                        dishesListView.invalidateViews();
+                    } else {
+                        // 之前没被点选过，添加选择
+                        rh.addNewSelection(dishList.get(position).getDish_id());
+                        tvOrderMssage.setText("选择了" + selectItem);
+                        tvOrderMssage.setVisibility(View.VISIBLE);
+                        handler.postDelayed(runnable, TIME);
+                        btnSelectedCounter.setText("已点：" + rh.totalSelection());
+                        dishesListView.invalidateViews();
+                    }
+                }
+            });
+
+            return rootView;
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+        }
+
+        @Override
+        public void onResume() {
+            MyLog.d(TAG, "On placeholder fragment resume, and the section number is: " + getArguments().getInt(ARG_SECTION_NUMBER));
+            dishesListView.invalidateViews();
+            super.onResume();
+        }
+
+        @Override
+        public void onPause() {
+            dishesListView.invalidateViews();
+            super.onPause();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.restaurant_plate_list, menu);
         return true;
@@ -328,234 +482,6 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        private String[] cats;
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        public void setCats(Set<String> cats) {
-            this.cats = cats.toArray(new String[0]);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return cats.length + 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
-            switch (position) {
-                case 0:
-                    return getString(R.string.pages_default_title1).toUpperCase(l);
-                case 1:
-                    return getString(R.string.pages_default_title2).toUpperCase(l);
-                default:
-                    return cats[position - 2];
-
-            }
-//            return null;
-        }
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-
-        // 测试用的 websocket connection
-//        WebSocketConnection mConnection;
-
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_restaurant_dishes_list, container, false);
-//            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-//            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-            dishesListView = (ListView) rootView.findViewById(R.id.plates_list_view);
-            dishesListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-//            final Button btnSelectedCounter = (Button) rootView.findViewById(R.id.btn_selected_counter);
-//            btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
-
-
-            // 测试用，在此模拟在某张餐桌上点餐的操作
-            // 首先，建立到服务器餐桌上的 ws 连接
-//            WSConnection.getInstance(getActivity()).connect(mTableId);
-//            mConnection = WSConnection.getInstance(getActivity()).mConnection;
-
-//            final ArrayList<String> list = new ArrayList<String>();
-//            String tempStr = "";
-//            if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-//                tempStr = getString(R.string.pages_title1);
-//            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
-//                tempStr = getString(R.string.pages_title2);
-//            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 3) {
-//                tempStr = getString(R.string.pages_title3);
-//            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 4) {
-//                tempStr = getString(R.string.pages_title4);
-//            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 5) {
-//                tempStr = getString(R.string.pages_title5);
-//            }
-//
-//            for (int i = 0; i < 30; i++) {
-//                list.add(tempStr + "_" + i);
-//            }
-
-            // 按分类更新当前 pager 的列表
-            switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
-                case 1:
-                    // 推荐菜品
-                    MyLog.d(TAG, "Switch to pager 1");
-                    break;
-                case 2:
-                    // 点击排行菜品
-                    MyLog.d(TAG, "Switch to pager 2");
-                    break;
-                default:
-                    // 剩下的是按照菜品分类
-                    MyLog.d(TAG, "Switch to pager" + getArguments().getInt(ARG_SECTION_NUMBER));
-
-                    break;
-            }
-
-            dishesListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-
-                @Override
-                public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
-                    Toast.makeText(getActivity(), i + " item checkedstate changed ", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                    return false;
-                }
-
-                @Override
-                public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                    return false;
-                }
-
-                @Override
-                public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                    return false;
-                }
-
-                @Override
-                public void onDestroyActionMode(ActionMode actionMode) {
-
-                }
-            });
-
-
-            dishesListAdapter = new DishesListAdapter(getActivity(), R.id.plates_list_view, dishList);
-            dishesListView.setAdapter(dishesListAdapter);
-
-//            final ArrayList<Dish> dishes = MakeUpRobot.getDishes();
-//            final DishesListAdapter dishesListAdapter = new DishesListAdapter(getActivity(), R.id.plates_list_view, dishes);
-//            dishesList.setAdapter(dishesListAdapter);
-
-            dishesListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-            dishesListView.setItemsCanFocus(false);
-            dishesListView.setClickable(true);
-
-            dishesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                    MyLog.d(TAG, "Item with index " + position + "clicked");
-//                    Dish dish = dishes.get(i);
-
-//                    // Set the dish selected if it is not selected before
-//                    if (dishes.get(i).isSelectedInList()) {
-//                        dish.setSelectedInList(true);
-//                        view.setBackgroundColor(getResources().getColor(R.color.blue));
-//                    } else {
-//                        //Other wise it should be unselected
-//                        dish.setSelectedInList(false);
-//                    }
-
-//                    dishes.set(i, dish);
-//                    dishesListAdapter.notifyDataSetChanged();
-
-
-                    dishesListAdapter.addNewSelection(position, !dishesListAdapter.isSelected(position));
-                    String selectItem = dishList.get(position).getDish().getDish_name();
-
-                    if (!dishesListAdapter.isSelected(position)) {
-                        // 自定义 TextView
-                        tvOrderMssage.setText("取消" + selectItem);
-                        tvOrderMssage.setVisibility(View.VISIBLE);
-                        handler.postDelayed(runnable, TIME);
-                        DishesSelectList.remove(selectItem);
-//                        mConnection.sendTextMessage("delete " + String.valueOf(position));
-                        btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
-                    } else {
-                        tvOrderMssage.setText("选择了" + selectItem);
-                        tvOrderMssage.setVisibility(View.VISIBLE);
-                        handler.postDelayed(runnable, TIME);
-                        DishesSelectList.add(selectItem);
-//                        mConnection.sendTextMessage("add " + String.valueOf(position));
-                        btnSelectedCounter.setText("已点：" + DishesSelectList.getCounter());
-                    }
-                }
-            });
-
-            btnSelectedCounter.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent();
-                    intent.setClass(getActivity(), DishesSelectedListActivity.class);
-                    startActivity(intent);
-                }
-            });
-
-            return rootView;
-        }
-
-        @Override
-        public void onDestroy() {
-//            mConnection.disconnect();
-            super.onDestroy();
-        }
-
     }
 
 }

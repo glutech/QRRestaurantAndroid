@@ -9,26 +9,28 @@ import java.util.HashMap;
 import java.util.List;
 
 import cn.com.zdez.qrrestaurant.R;
-import cn.com.zdez.qrrestaurant.entities.Dish;
 import cn.com.zdez.qrrestaurant.layouts.DishesListItemLayout;
-import cn.com.zdez.qrrestaurant.vo.DishVo;
+import cn.com.zdez.qrrestaurant.model.Dish;
 
 /**
  * Created by LuoHanLin on 13-12-6.
  */
-public class DishesListAdapter extends ArrayAdapter<DishVo> {
+public class DishesListAdapter extends ArrayAdapter<Dish> {
 
+    private static String TAG = DishesListAdapter.class.getSimpleName();
     private Context context;
     private HashMap<Integer, Boolean> mSelection = new HashMap<Integer, Boolean>();
 
-    public DishesListAdapter(Context context, int resource, List<DishVo> objects) {
+    public DishesListAdapter(Context context, int resource, List<Dish> objects) {
         super(context, resource, objects);
         this.context = context;
     }
 
     public void addNewSelection(int position, boolean value){
         mSelection.put(position, value);
+        MyLog.d(TAG, "Before add notify");
         notifyDataSetChanged();
+        MyLog.d(TAG,"After add notify");
     }
 
     public boolean isSelected(int position){
@@ -52,7 +54,7 @@ public class DishesListAdapter extends ArrayAdapter<DishVo> {
 
         v = (DishesListItemLayout) View.inflate(context, R.layout.list_item_for_dish, null);
 
-        v.setLayout(getItem(position), isSelected(position));
+        v.setLayout(getItem(position));
 
         return v;
     }

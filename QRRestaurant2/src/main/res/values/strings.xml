@@ -136,5 +136,7 @@
     <string name="wifi_type_label">类型</string>
     <string name="title_activity_welcome">二维码点餐</string>
     <string name="title_activity_restaurant_detail">餐厅信息</string>
+    <string name="title_activity_tab_pager_test">TabPagerTestActivity</string>
+    <string name="title_activity_test_tab_pager">TestTabPagerActivity</string>
 
 </resources>
