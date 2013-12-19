@@ -19,14 +19,34 @@
         android:layout_height="match_parent"
         tools:context=".RestaurantPlateListActivity" />
 
-    <Button
-        android:id="@+id/btn_selected_counter"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:padding="10dp"
-        android:background="@drawable/btn_bg_green"
-        android:text="请选择" />
+        android:layout_gravity="bottom"
+        >
+        <TextView
+            android:id="@+id/tv_order_message"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:padding="10sp"
+            android:visibility="gone"
+            android:layout_toLeftOf="@+id/btn_selected_counter"
+            android:text="谁谁谁点了/删除了某某菜"
+            android:background="@color/blue_t"
+            android:layout_height="@dimen/bottom_message_hight" />
+        <Button
+            android:id="@id/btn_selected_counter"
+            android:layout_height="@dimen/bottom_message_hight"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:background="@drawable/btn_bg_green"
+            android:text="请选择" />
+
+        </RelativeLayout>
+
+
+
 
 
 </FrameLayout>

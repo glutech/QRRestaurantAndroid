@@ -37,6 +37,7 @@
         <activity
             android:name="cn.com.zdez.qrrestaurant.QRRMainActivity"
             android:label="@string/app_name"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait" >
         </activity>
         <activity

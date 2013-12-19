@@ -6,4 +6,6 @@
 
     <dimen name="standard_padding">8dip</dimen>
     <dimen name="half_padding">4dip</dimen>
+
+    <dimen name="bottom_message_hight">48dp</dimen>
 </resources>
