@@ -222,6 +222,13 @@
             android:name="cn.com.zdez.qrrestaurant.TestTabPagerActivity"
             android:label="@string/title_activity_test_tab_pager" >
         </activity>
+        <activity
+            android:name="cn.com.zdez.qrrestaurant.DishDetialActivity"
+            android:label="@string/title_activity_dish_detial" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cn.com.zdez.qrrestaurant.RestaurantDishesListActivity" />
+        </activity>
     </application>
 
 </manifest>

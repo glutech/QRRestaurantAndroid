@@ -484,4 +484,6 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
+
+
 }

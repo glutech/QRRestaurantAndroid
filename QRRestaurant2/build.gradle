@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.+'
+        classpath 'com.android.tools.build:gradle:0.7.+'
     }
 }
 apply plugin: 'android'
@@ -20,7 +20,19 @@ android {
         minSdkVersion 9
         targetSdkVersion 18
     }
+
+    packagingOptions {
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/NOTICE'
+//        exclude 'libs/jackson-mapper-asl-1.9.7.jar/META-INF/ASL2.0'
+//        exclude 'libs/jackson-mapper-asl-1.9.7.jar/META-INF/LICENSE'
+//        exclude 'libs/jackson-mapper-asl-1.9.7.jar/META-INF/MANIFEST.MF'
+//        exclude 'libs/jackson-mapper-asl-1.9.7.jar/META-INF/NOTICE'
+    }
 }
+
 
 dependencies {
     compile 'com.android.support:gridlayout-v7:19.0.0'
@@ -30,3 +42,5 @@ dependencies {
     compile files('libs/jackson-mapper-asl-1.9.7.jar')
     compile files('libs/gson-2.2.2.jar')
 }
+
+

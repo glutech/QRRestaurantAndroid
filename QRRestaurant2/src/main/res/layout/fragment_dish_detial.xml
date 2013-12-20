@@ -1,0 +1,224 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cn.com.zdez.qrrestaurant.DishDetialActivity$PlaceholderFragment">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:scrollbars="none"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:background="@color/result_minor_text"
+                    android:layout_height="wrap_content">
+
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/foodcover"
+                        android:background="@color/result_minor_text"
+                        android:id="@+id/img_dish_detail"
+                        android:scaleType="centerCrop" />
+
+                    <RelativeLayout
+                        android:gravity="center_horizontal"
+                        android:layout_gravity="bottom"
+                        android:background="@color/purple_t"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/tv_dish_detail_name"
+                            android:layout_alignParentLeft="true"
+                            android:padding="10sp"
+                            android:text="火腿木瓜鸡"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:padding="10sp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:textSize="20sp"
+                            android:text="￥42"
+                            android:textColor="@color/red"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </RelativeLayout>
+
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_margin="16dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_blue_rect"
+                        >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="详细描述"
+                            android:padding="5sp"
+                            android:textColor="@color/result_text"
+                            android:layout_gravity="center" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:background="@drawable/bg_white_rect"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:text="阿奎就爱看缴费单空间啊肯德基疯狂世界地方金卡介绍的开房间案例开房间卡绝对开房间上岛咖啡，金卡上岛咖啡连接撒旦开房间卡十几分都是，就爱看事件地方可视对讲阿奎积分卡水电费"
+                            android:padding="10sp"
+
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_margin="16dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/green"
+
+                        >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="网友评论"
+                            android:padding="5sp"
+                            android:textColor="@color/result_text"
+                            android:layout_gravity="center" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:background="@color/result_minor_text"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:text="阿奎就爱看缴费单空间啊肯德基疯狂世界地方金卡介绍的开房间案例开房间卡绝对开房间上岛咖啡，金卡上岛咖啡连接撒旦开房间卡十几分都是，就爱看事件地方可视对讲阿奎积分卡水电费"
+                            android:padding="10sp"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_margin="16dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/orange"
+
+                        >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="其他东西"
+                            android:padding="5sp"
+                            android:textColor="@color/result_text"
+                            android:layout_gravity="center" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:background="@color/result_minor_text"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:text="阿奎就爱看缴费单空间啊肯德基疯狂世界地方金卡介绍的开房间案例开房间卡绝对开房间上岛咖啡，金卡上岛咖啡连接撒旦开房间卡十几分都是，就爱看事件地方可视对讲阿奎积分卡水电费"
+                            android:padding="10sp"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp" />
+
+
+            </LinearLayout>
+
+
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_gravity="bottom"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:background="@color/blue_light_t"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:layout_width="1dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:hint="撰写评论"
+                android:id="@+id/edit_dish_comment" />
+
+            <Button
+                android:layout_width="1dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_submmit_dish_comment"
+                android:text="提交" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+</RelativeLayout>
