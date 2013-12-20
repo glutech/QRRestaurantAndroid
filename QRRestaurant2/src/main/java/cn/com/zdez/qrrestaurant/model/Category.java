@@ -21,6 +21,6 @@ public class Category {
 		return rest_id;
 	}
 	public void setRest_id(long rest_id) {
-		this.cat_id = rest_id;
+		this.rest_id = rest_id;
 	}
 }

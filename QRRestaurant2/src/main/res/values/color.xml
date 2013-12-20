@@ -11,6 +11,8 @@
     <color name="orange_light">#FFBB33</color>
     <color name="red">#CC0000</color>
     <color name="red_light">#FF4444</color>
+    <color name="shadow_white">#8D8D91</color>
+    <color name="ios7_blue">#1681FA</color>
 
     <color name="gray">#ff414141</color>
 
@@ -25,6 +27,7 @@
     <color name="orange_light_t_80">#80FFBB33</color>
     <color name="red_t_50">#50CC0000</color>
     <color name="red_light_t_80">#80FF4444</color>
+    <color name="shadow_white_t">#808D8D91</color>
 
     <color name="contents_text">#ff000000</color>
     <color name="encode_view">#ffffffff</color>

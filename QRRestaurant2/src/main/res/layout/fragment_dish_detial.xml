@@ -36,7 +36,7 @@
                     <RelativeLayout
                         android:gravity="center_horizontal"
                         android:layout_gravity="bottom"
-                        android:background="@color/purple_t"
+                        android:background="@color/shadow_white_t"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -65,7 +65,7 @@
                 </FrameLayout>
 
                 <LinearLayout
-                    android:layout_margin="16dp"
+                    android:layout_margin="10dp"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -74,8 +74,14 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_blue_rect"
-                        >
+                        android:background="@drawable/bg_rec_top_blue_light">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:padding="3dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/bubbles"
+                            android:layout_height="wrap_content" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -92,6 +98,7 @@
                         android:background="@drawable/bg_white_rect"
                         android:layout_height="wrap_content">
 
+
                         <TextView
                             android:layout_width="match_parent"
                             android:text="阿奎就爱看缴费单空间啊肯德基疯狂世界地方金卡介绍的开房间案例开房间卡绝对开房间上岛咖啡，金卡上岛咖啡连接撒旦开房间卡十几分都是，就爱看事件地方可视对讲阿奎积分卡水电费"
@@ -105,7 +112,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_margin="16dp"
+                    android:layout_margin="10dp"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -114,10 +121,14 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/green"
+                        android:background="@drawable/bg_rec_green_light">
 
-                        >
-
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:padding="3dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/bubbles"
+                            android:layout_height="wrap_content" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -130,7 +141,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:background="@color/result_minor_text"
+                        android:background="@drawable/bg_white_rect"
                         android:layout_height="wrap_content">
 
                         <TextView
@@ -145,7 +156,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_margin="16dp"
+                    android:layout_margin="10dp"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -154,10 +165,14 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/orange"
+                        android:background="@drawable/bg_rec_top_purple_light">
 
-                        >
-
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:padding="3dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/bubbles"
+                            android:layout_height="wrap_content" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -170,7 +185,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:background="@color/result_minor_text"
+                        android:background="@drawable/bg_white_rect"
                         android:layout_height="wrap_content">
 
                         <TextView
@@ -198,25 +213,32 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:gravity="center"
+            android:orientation="horizontal"
             android:layout_gravity="bottom"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:background="@color/blue_light_t"
+            android:background="@drawable/bg_bar_t"
             android:layout_height="wrap_content">
 
             <EditText
                 android:layout_width="1dp"
+                android:layout_marginLeft="10dp"
+                android:padding="3dp"
                 android:layout_height="wrap_content"
+                android:minHeight="35dp"
                 android:layout_weight="4"
+                android:background="@drawable/bg_editor"
                 android:hint="撰写评论"
                 android:id="@+id/edit_dish_comment" />
 
             <Button
-                android:layout_width="1dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/btn_submmit_dish_comment"
-                android:text="提交" />
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:text="提交"
+                android:textColor="@color/ios7_blue"
+                android:layout_marginRight="10dp" />
         </LinearLayout>
 
     </FrameLayout>
