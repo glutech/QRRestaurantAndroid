@@ -13,17 +13,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.List;
 
 import cn.com.zdez.qrrestaurant.helper.RestaurantWaitressGirl;
+import cn.com.zdez.qrrestaurant.layouts.DishesSelectedAdapter;
+import cn.com.zdez.qrrestaurant.model.Dish;
 
-public class DishDetialActivity extends ActionBarActivity {
+public class SelectedDishesActivity extends ActionBarActivity {
 
     ActionBar actionBar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dish_detial);
+        setContentView(R.layout.activity_selected_dishes);
 
         actionBar = getSupportActionBar();
 
@@ -35,14 +41,14 @@ public class DishDetialActivity extends ActionBarActivity {
 
         // 添加返回箭头
         actionBar.setDisplayHomeAsUpEnabled(true);
-    }
+        actionBar.setTitle(getResources().getString(R.string.title_activity_selected_dishes) + ":" + RestaurantWaitressGirl.getSelectedDishList().size());}
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+        
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.dish_detial, menu);
+        getMenuInflater().inflate(R.menu.selected_dishes, menu);
         return true;
     }
 
@@ -82,13 +88,31 @@ public class DishDetialActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        private ListView lvSelectedDishes;
+        private TextView tvSelectedCount;
+        private TextView tvTotalPrivce;
+        private Button btnSubmmitSelected;
+        private Button btnContinueAdd;
+        private List<Dish> selectedDishes;
+
         public PlaceholderFragment() {
+            selectedDishes = RestaurantWaitressGirl.getSelectedDishList();
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_dish_detial, container, false);
+                Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_selected_dishes, container, false);
+            lvSelectedDishes = (ListView) rootView.findViewById(R.id.lv_selected_dishes);
+            tvSelectedCount = (TextView) rootView.findViewById(R.id.tv_item_seleted_count);
+            tvTotalPrivce = (TextView) rootView.findViewById(R.id.tv_selected_total_price);
+            btnContinueAdd = (Button) rootView.findViewById(R.id.btn_continue_add);
+            btnSubmmitSelected = (Button) rootView.findViewById(R.id.btn_selected_submit);
+
+            DishesSelectedAdapter seletedAdapter = new DishesSelectedAdapter(getActivity(), R.id.lv_selected_dishes, selectedDishes);
+
+            lvSelectedDishes.setAdapter(seletedAdapter);
+
             return rootView;
         }
     }

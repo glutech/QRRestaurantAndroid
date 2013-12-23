@@ -25,6 +25,8 @@ public class DishesListItemLayout extends RelativeLayout {
     private TextView tvTitle;
     private TextView tvBrief;
     private TextView tvExtra;
+    private TextView tvPrice;
+    private TextView tvRecommend;
     private SmartImageView imgCover;
     private ImageView imgRate;
     private static String TAG = DishesListItemLayout.class.getSimpleName();

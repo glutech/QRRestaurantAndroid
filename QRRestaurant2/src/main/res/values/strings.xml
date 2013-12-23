@@ -139,5 +139,6 @@
     <string name="title_activity_tab_pager_test">TabPagerTestActivity</string>
     <string name="title_activity_test_tab_pager">TestTabPagerActivity</string>
     <string name="title_activity_dish_detial">菜品详情</string>
+    <string name="title_activity_selected_dishes">已选择的菜品</string>
 
 </resources>

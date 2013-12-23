@@ -40,7 +40,7 @@ import cn.com.zdez.qrrestaurant.http.QRRHTTPClient;
 import cn.com.zdez.qrrestaurant.model.Dish;
 import cn.com.zdez.qrrestaurant.utils.ConnectivityUtil;
 import cn.com.zdez.qrrestaurant.utils.Constants;
-import cn.com.zdez.qrrestaurant.utils.DishesListAdapter;
+import cn.com.zdez.qrrestaurant.layouts.DishesListAdapter;
 import cn.com.zdez.qrrestaurant.utils.MyLog;
 import cn.com.zdez.qrrestaurant.vo.DishesVo;
 
@@ -129,6 +129,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
         // 加载餐厅信息和菜品
         loadRestaurantInfo();
+        setSelectIntent();
 
         // 添加返回箭头
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -178,27 +179,28 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                         setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
 
                         // 显示错误信息
-                        // 暂时取消
-                        //TODO: 恢复
-//                        tvAlert.setText("服务连接出错，请稍候再试...");
-//                        tvAlert.setVisibility(View.VISIBLE);
+                        // 在不联网或者没有服务器的时候生成假的数据用于演示使用
+                        if (MyLog.LOG) {
+                            dishesVo = MakeUpRobot.getDishVo();
+                            if (null != dishesVo) {
+                                // json 数据反序列化成功，得到扫描结果实体，开始填充菜品列表详细数据
+                                MyLog.d(TAG, "Parse json out, restName: " + dishesVo.getRest_name() + " and the dish: " + dishesVo.getDishlist().get(0).getDish_name());
+                            }
 
-                        dishesVo = MakeUpRobot.getDishVo();
-                        if (null != dishesVo) {
-                            // json 数据反序列化成功，得到扫描结果实体，开始填充菜品列表详细数据
-                            MyLog.d(TAG, "Parse json out, restName: " + dishesVo.getRest_name() + " and the dish: " + dishesVo.getDishlist().get(0).getDish_name());
+                            // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
+                            rh = RestaurantWaitressGirl.getInstance(dishesVo);
+
+                            mToggleIndeterminate = !mToggleIndeterminate;
+                            setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+
+                            setFragmentPagerTitle();
+
+                            // 设置标题
+                            actionBar.setTitle(dishesVo.getRest_name());
+                        } else {
+                            tvAlert.setText("服务连接出错，请稍候再试...");
+                            tvAlert.setVisibility(View.VISIBLE);
                         }
-
-                        // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
-                        rh = RestaurantWaitressGirl.getInstance(dishesVo);
-
-                        mToggleIndeterminate = !mToggleIndeterminate;
-                        setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
-
-                        setFragmentPagerTitle();
-
-                        // 设置标题
-                        actionBar.setTitle(dishesVo.getRest_name());
 
                         super.onFailure(error, content);
                     }
@@ -505,4 +507,14 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     }
 
 
+    private void setSelectIntent() {
+        btnSelectedCounter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent toSelectedList = new Intent();
+                toSelectedList.setClass(RestaurantDishesListActivity.this, SelectedDishesActivity.class);
+                startActivity(toSelectedList);
+            }
+        });
+    }
 }

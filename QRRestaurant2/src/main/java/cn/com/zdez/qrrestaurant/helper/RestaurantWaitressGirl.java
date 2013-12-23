@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,11 +19,12 @@ import cn.com.zdez.qrrestaurant.vo.DishesVo;
  */
 public class RestaurantWaitressGirl {
 
-    private static DishesVo dishesVo;
-    public Map<String, List<Dish>> catedDishMap = new HashMap<String, List<Dish>>();
+    private static DishesVo dishesVo; // 从服务器中取得的数据，需进一步处理
+    public Map<String, List<Dish>> catedDishMap = new HashMap<String, List<Dish>>(); // 按照类别存储每一个类别下的 dishlist
     public static RestaurantWaitressGirl instance;
-    public Map<Long, Category> catMap = new HashMap<Long, Category>();
-    public String[] categoryNameArray;
+    public Map<Long, Category> catMap = new HashMap<Long, Category>(); // 按照类别 id 存储每一个类别实体
+    public String[] categoryNameArray; // dishesVo 中所有的类别名称数组
+    public static Map<Long, Dish> dishMap = new HashMap<Long, Dish>(); // 按照 dish id 存储每一个 dish 实体
 
     // 点菜过程中的点选记录
     public static HashMap<Long, Integer> selection = new HashMap<Long, Integer>();
@@ -34,7 +36,6 @@ public class RestaurantWaitressGirl {
         makeCategory(); // 在生成对象的时候处理排序、分类操作
         makeCategoryNameList();
     }
-
 
     public static RestaurantWaitressGirl getInstance(DishesVo dishesVo) {
         if (null == instance) {
@@ -71,6 +72,9 @@ public class RestaurantWaitressGirl {
                 // 有这个类别,直接添加到这个类别里面的 list 里就 ok，因为在循环里不会重复
                 catedDishMap.get(catMap.get(dish.getCat_id()).getCat_name()).add(dish);
             }
+
+            // 分类的同时将 dishes 按照 dishID 存到 dishMap 中
+            dishMap.put(dish.getDish_id(), dish);
         }
     }
 
@@ -121,9 +125,9 @@ public class RestaurantWaitressGirl {
     }
 
     /**
-     * 减去菜品，有一个的话删除这个菜，返回0；有多个的话，减一，返回剩下的数目
-     * 本来就没有的话，返回-1
-     * @param did
+     * /**
+     * @param did 菜品 id
+     * @return 已选择列表中没有这个菜的话返回-1（错误）,成功减少数目并且现有数目大于0则返回当前个数，成功减少并且为0的话返回0
      */
     public static int removeSelection(Long did) {
         if (selection.containsKey(did)) {
@@ -148,5 +152,17 @@ public class RestaurantWaitressGirl {
 
     public static int totalSelection(){
         return totalSelection;
+    }
+
+    public static List<Dish> getSelectedDishList(){
+        List<Dish> seletedDishList = new ArrayList<Dish>();
+
+        Iterator iter2 = selection.entrySet().iterator();
+        while(iter2.hasNext()){
+            Map.Entry<Long, Integer> entry = (Map.Entry<Long, Integer>) iter2.next();
+
+            seletedDishList.add(dishMap.get(entry.getKey()));
+        }
+        return seletedDishList;
     }
 }

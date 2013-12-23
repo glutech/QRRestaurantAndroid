@@ -1,4 +1,4 @@
-package cn.com.zdez.qrrestaurant.utils;
+package cn.com.zdez.qrrestaurant.layouts;
 
 import android.content.Context;
 import android.view.View;
@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import cn.com.zdez.qrrestaurant.R;
-import cn.com.zdez.qrrestaurant.layouts.DishesListItemLayout;
 import cn.com.zdez.qrrestaurant.model.Dish;
+import cn.com.zdez.qrrestaurant.utils.MyLog;
 
 /**
  * Created by LuoHanLin on 13-12-6.

@@ -5,7 +5,7 @@ package cn.com.zdez.qrrestaurant.utils;
  */
 public class MyLog {
 
-    static final boolean LOG = true;
+    public static final boolean LOG = true;
 
     public static void i(String tag, String str) {
         if (LOG) android.util.Log.i(tag, str);

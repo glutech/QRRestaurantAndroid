@@ -229,6 +229,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cn.com.zdez.qrrestaurant.RestaurantDishesListActivity" />
         </activity>
+        <activity
+            android:name="cn.com.zdez.qrrestaurant.SelectedDishesActivity"
+            android:label="@string/title_activity_selected_dishes" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cn.com.zdez.qrrestaurant.RestaurantDishesListActivity" />
+        </activity>
     </application>
 
 </manifest>
