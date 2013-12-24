@@ -1,9 +1,62 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="10dp"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-    <TextView
+<?xml version="1.0" encoding="utf-8"?>
+<cn.com.zdez.qrrestaurant.layouts.RestaurantListItem xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
-</LinearLayout>
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_list_res_name"
+            android:layout_alignParentLeft="true"
+            android:singleLine="true"
+            android:padding="3dp"
+            android:text="御膳房"
+            android:textSize="@dimen/abc_action_bar_title_text_size" />
+
+
+
+        <TextView
+            android:id="@+id/tv_list_res_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/dark_light"
+            android:padding="3dp"
+            android:text="皇家专用"
+            android:layout_alignBottom="@id/tv_list_res_name"
+            android:layout_toRightOf="@id/tv_list_res_name" />
+
+        <TextView
+            android:id="@+id/tv_list_res_addr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:textColor="@color/dark_light"
+            android:text="地址：北京，故宫42号"
+            android:layout_below="@id/tv_list_res_name"
+            android:layout_alignParentLeft="true"/>
+
+        <RatingBar
+            android:id="@+id/rb_list_rest_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:layout_alignParentTop="true"
+            style="?android:ratingBarStyleSmall"
+            android:rating="5"
+            android:layout_margin="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/tv_list_res_name" />
+
+
+    </RelativeLayout>
+
+</cn.com.zdez.qrrestaurant.layouts.RestaurantListItem>

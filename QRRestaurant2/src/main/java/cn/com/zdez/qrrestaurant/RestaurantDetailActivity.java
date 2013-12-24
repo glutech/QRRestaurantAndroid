@@ -17,6 +17,9 @@ import android.widget.Button;
 
 import cn.com.zdez.qrrestaurant.utils.ToastUtil;
 
+/**
+ * 从 intent 中取得餐厅编号，到服务器中取得餐厅的详细信息
+ */
 public class RestaurantDetailActivity extends ActionBarActivity {
 
     private static String mTableId;

@@ -9,38 +9,150 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import cn.com.zdez.qrrestaurant.helper.MakeUpRobot;
+import cn.com.zdez.qrrestaurant.http.QRRHTTPClient;
+import cn.com.zdez.qrrestaurant.layouts.RestaurantListAdapter;
+import cn.com.zdez.qrrestaurant.model.Restaurant;
+import cn.com.zdez.qrrestaurant.utils.ConnectivityUtil;
+import cn.com.zdez.qrrestaurant.utils.Constants;
+import cn.com.zdez.qrrestaurant.utils.MyLog;
 
 public class RestaurantChooserActivity extends ActionBarActivity implements ActionBar.OnNavigationListener {
 
     /**
+     * 在预订的时候要进行餐厅的选择，首先像服务器请求餐厅列表
+     * TODO: 加入餐厅的选择条件（定位周边，搜索关键字，推荐列表，用户查看过的历史餐厅列表）
      * The serialization (saved instance state) Bundle key representing the
      * current dropdown position.
      */
     private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
+    private static String TAG = RestaurantChooserActivity.class.getSimpleName();
+    private boolean mToggleIndeterminate = false;
+    private TextView tvAlert;
+    public static List<Restaurant> restaurantList;
+    ActionBar actionBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_restaurant_chooser);
 
-        // Set up the action bar to show a dropdown list.
-        final ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        tvAlert = (TextView) findViewById(R.id.tv_rests_alert);
+
+        actionBar = getSupportActionBar();
+
 
         // 添加返回箭头
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        loadRestaurantList();
+    }
+
+    /**
+     * 从服务请求餐厅列表，加载列表，生成 dropdownlist
+     */
+    private void loadRestaurantList() {
+        if (!ConnectivityUtil.isOnline(this)) {
+            // 提示网络连接错误
+            MyLog.d(TAG, "没有连接网络...");
+            actionBar.setTitle(getResources().getString(R.string.title_activity_restaurant_chooser) + "(未连接)");
+            tvAlert.setText(R.string.msg_alert_network_disconnect);
+            tvAlert.setVisibility(View.VISIBLE);
+        } else {
+            // 网络连接正常
+            // 旋转吧，菊花
+            mToggleIndeterminate = !mToggleIndeterminate;
+            setSupportProgressBarIndeterminate(true);
+            setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+            RequestParams params = new RequestParams();
+            QRRHTTPClient.post(Constants.GETRESTAURANT_LIST_ALL, params, new AsyncHttpResponseHandler() {
+
+                @Override
+                public void onFailure(Throwable error, String content) {
+                    MyLog.e(TAG, "Failure on request all restaurant list...");
+                    // 服务器不响应
+                    // 如果在测试阶段，允许使用瞎编的数据代替那个不争气的服务器所提供的数据
+                    if (!MyLog.LOG) {
+                        restaurantList = MakeUpRobot.makeUpRestaurantList();
+                    } else {
+                        // 不在测试阶段，服务器不响应的话，给用户提示信息
+                        actionBar.setTitle(getResources().getString(R.string.title_activity_restaurant_chooser) + "(未连接)");
+                        tvAlert.setText(getResources().getString(R.string.msg_alert_server_down));
+                        tvAlert.setVisibility(View.VISIBLE);
+                    }
+                    mToggleIndeterminate = !mToggleIndeterminate;
+                    setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+
+                    super.onFailure(error, content);
+                }
+
+                @Override
+                public void onSuccess(String content) {
+                    MyLog.v(TAG, "成功请求到餐厅列表json...It's: " + content);
+                    Gson gson = new Gson();
+                    Restaurant[] rests = null;
+                    try {
+                        // JSON反序列化
+                        rests = gson.fromJson(content, Restaurant[].class);
+                    } catch (Exception e) {
+                        MyLog.e(TAG, "Op Serialization exception...");
+                        e.printStackTrace();
+                    }
+
+                    if (rests != null && rests.length > 0) {
+                        restaurantList = new ArrayList<Restaurant>(Arrays.asList(rests));
+                    } else {
+                        Log.d(TAG, "Got null rests or rests has not entry, It's :" + rests);
+                    }
+//                    try {
+//                        MyLog.d(TAG, "-------------This is huge--------------------");
+//                        Thread.sleep(5000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+
+                    mToggleIndeterminate = !mToggleIndeterminate;
+                    setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+
+                    // 得到数据后开始加载 list
+                    // TODO: 显示成功加载的信息，或者在列表显示完成之后显示
+                    setTheList();
+
+                    super.onSuccess(content);
+                }
+            });
+        }
+    }
+
+    /**
+     * 设置 actionbar 和下拉列表
+     */
+    private void setTheList() {
+        // Set up the action bar to show a dropdown list.
+//        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         // Set up the dropdown list navigation in the action bar.
         actionBar.setListNavigationCallbacks(
                 // Specify a SpinnerAdapter to populate the dropdown list.
@@ -51,7 +163,6 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
                         new String[]{
                                 getString(R.string.title_section1),
                                 getString(R.string.title_section2),
-                                getString(R.string.title_section3),
                         }),
                 this);
     }
@@ -135,6 +246,8 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        ListView lvRestaurant;
+        RestaurantListAdapter listAdapter;
 
         public PlaceholderFragment() {
         }
@@ -155,32 +268,52 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_restaurant_chooser, container, false);
-            ListView resList = (ListView) rootView.findViewById(R.id.section_list_view);
-            final ArrayList<String> list = new ArrayList<String>();
-            String tempStr;
-            if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-                tempStr = getString(R.string.title_section1);
-            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
-                tempStr = getString(R.string.title_section2);
-            } else
-                tempStr = getString(R.string.title_section3);
 
-            for (int i = 0; i < 30; i++) {
-                list.add(tempStr + "_" + i);
-            }
+            lvRestaurant = (ListView) rootView.findViewById(R.id.lv_restaurants_list);
 
-            resList.setAdapter(new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1, list));
+            // TODO: 在此分离餐厅列表，附近（按城市、地区，区分）的和推荐的
+            // 目前全部一样
+            listAdapter = new RestaurantListAdapter(getActivity(), R.id.lv_restaurants_list, restaurantList);
+            lvRestaurant.setAdapter(listAdapter);
 
-            resList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            // 列表点击，跳转餐厅详情
+            lvRestaurant.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Intent intent = new Intent();
-                    intent.putExtra("tid", "2");
-                    intent.setClass(getActivity(), RestaurantDetailActivity.class);
-                    startActivity(intent);
+                    Intent detailIntent = new Intent();
+                    detailIntent.setClass(getActivity(), RestaurantDetailActivity.class);
+                    detailIntent.putExtra("tid", restaurantList.get(i).getRest_id());
+                    startActivity(detailIntent);
                 }
             });
+
+            // Old list samples
+//            ListView resList = (ListView) rootView.findViewById(R.id.section_list_view);
+//            final ArrayList<String> list = new ArrayList<String>();
+//            String tempStr;
+//            if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+//                tempStr = getString(R.string.title_section1);
+//            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
+//                tempStr = getString(R.string.title_section2);
+//            } else
+//                tempStr = getString(R.string.title_section3);
+//
+//            for (int i = 0; i < 30; i++) {
+//                list.add(tempStr + "_" + i);
+//            }
+//
+//            resList.setAdapter(new ArrayAdapter<String>(getActivity(),
+//                    android.R.layout.simple_list_item_1, list));
+//
+//            resList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                @Override
+//                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                    Intent intent = new Intent();
+//                    intent.putExtra("tid", "2");
+//                    intent.setClass(getActivity(), RestaurantDetailActivity.class);
+//                    startActivity(intent);
+//                }
+//            });
 
 //            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
 //            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));

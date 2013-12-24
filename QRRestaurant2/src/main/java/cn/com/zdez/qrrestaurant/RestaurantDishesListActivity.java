@@ -147,7 +147,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             // 提示网络连接错误
             MyLog.d(TAG, "没有联网...");
             actionBar.setTitle(getResources().getString(R.string.app_name) + "(未连接)");
-            tvAlert.setText("当前网络不可用，请检查网络设置...");
+            tvAlert.setText(getResources().getString(R.string.msg_alert_network_disconnect));
             tvAlert.setVisibility(View.VISIBLE);
 //            ToastUtil.showShortToast(this, "网络连接错误，请检查网络环境！");
         } else {
@@ -198,7 +198,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                             // 设置标题
                             actionBar.setTitle(dishesVo.getRest_name());
                         } else {
-                            tvAlert.setText("服务连接出错，请稍候再试...");
+                            tvAlert.setText(getResources().getString(R.string.msg_alert_server_down));
                             tvAlert.setVisibility(View.VISIBLE);
                         }
 
@@ -219,6 +219,13 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
                         // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
                         rh = RestaurantWaitressGirl.getInstance(dishesVo);
+
+//                        try {
+//                            MyLog.d(TAG, "-------------This is huge--------------------");
+//                            Thread.sleep(5000);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
 
                         mToggleIndeterminate = !mToggleIndeterminate;
                         setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
@@ -346,9 +353,9 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
             MyLog.d(TAG, "---------------------on Fragment create view----------------------+" + tableName);
             dishList = new ArrayList<Dish>(rh.catedDishMap.get(rh.categoryNameArray[getArguments().getInt(ARG_SECTION_NUMBER) - 1]));
-            dishesListAdapter = new DishesListAdapter(getActivity(), R.id.plates_list_view, dishList);
+            dishesListAdapter = new DishesListAdapter(getActivity(), R.id.lv_dishes_list, dishList);
 
-            dishesListView = (ListView) rootView.findViewById(R.id.plates_list_view);
+            dishesListView = (ListView) rootView.findViewById(R.id.lv_dishes_list);
             dishesListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 
             dishesListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {

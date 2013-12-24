@@ -52,12 +52,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
-                android:layout_width="wrap_content"
                 android:id="@+id/btn_delete_one"
                 android:layout_margin="3dp"
+                android:padding="3dp"
                 android:clickable="true"
                 android:src="@drawable/icon_delete"
-                android:layout_height="wrap_content" />
+                android:layout_height="30dp"
+                android:layout_width="30dp"/>
             <TextView
                 android:id="@+id/tv_item_seleted_count"
                 android:text="x1"
@@ -66,16 +67,17 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:background="@drawable/bg_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="30dp"
+                android:layout_width="30dp" />
 
             <ImageView
                 android:clickable="true"
+                android:padding="3dp"
                 android:layout_margin="3dp"
                 android:id="@+id/btn_add_one"
                 android:src="@drawable/icon_add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="30dp"
+                android:layout_width="30dp" />
 
             </LinearLayout>
 

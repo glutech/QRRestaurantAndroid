@@ -5,6 +5,7 @@ import java.util.List;
 
 import cn.com.zdez.qrrestaurant.model.Category;
 import cn.com.zdez.qrrestaurant.model.Dish;
+import cn.com.zdez.qrrestaurant.model.Restaurant;
 import cn.com.zdez.qrrestaurant.vo.DishesVo;
 
 /**
@@ -49,4 +50,22 @@ public class MakeUpRobot {
 
         return  dishesVo;
     }
+
+    public static List<Restaurant> makeUpRestaurantList(){
+        List<Restaurant> list = new ArrayList<Restaurant>();
+        for(int i = 1; i < 20; i++){
+            Restaurant res = new Restaurant();
+            res.setRest_id(i);
+            res.setRest_addr("官渡区，民航路-格林威治29号");
+            res.setRest_desc("御膳房，就是专门准备皇帝、皇后食桌的厨房。分布于紫荆城内大大小小的宫院里，都有各自的膳房。设有荤局、素局、挂炉局、点心局、饭局等五局。");
+            res.setRest_name("御膳房" + i + "号宫");
+            res.setRest_tel("1001011");
+            res.setRest_type("皇室专享");
+            res.setRest_upid(1001011);
+            list.add(res);
+        }
+
+        return list;
+    }
+
 }
