@@ -12,6 +12,14 @@
         android:text="提示消息"
         android:padding="5sp"
         android:visibility="gone" />
+    <TextView
+        android:id="@+id/tv_onloading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="正在加载..."
+        android:padding="5sp"
+        android:gravity="center_horizontal"
+        />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"

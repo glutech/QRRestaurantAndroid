@@ -49,6 +49,7 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
     private static String TAG = RestaurantChooserActivity.class.getSimpleName();
     private boolean mToggleIndeterminate = false;
     private TextView tvAlert;
+    private TextView tvLoadInfo;
     public static List<Restaurant> restaurantList;
     ActionBar actionBar;
 
@@ -60,6 +61,7 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
         setContentView(R.layout.activity_restaurant_chooser);
 
         tvAlert = (TextView) findViewById(R.id.tv_rests_alert);
+        tvLoadInfo = (TextView) findViewById(R.id.tv_onloading);
 
         actionBar = getSupportActionBar();
 
@@ -74,11 +76,12 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
      * 从服务请求餐厅列表，加载列表，生成 dropdownlist
      */
     private void loadRestaurantList() {
-        if (!ConnectivityUtil.isOnline(this)) {
+        if (!ConnectivityUtil.isOnline(this) && !MyLog.DEBUG) {
             // 提示网络连接错误
             MyLog.d(TAG, "没有连接网络...");
             actionBar.setTitle(getResources().getString(R.string.title_activity_restaurant_chooser) + "(未连接)");
             tvAlert.setText(R.string.msg_alert_network_disconnect);
+            tvLoadInfo.setVisibility(View.GONE);
             tvAlert.setVisibility(View.VISIBLE);
         } else {
             // 网络连接正常
@@ -94,16 +97,19 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
                     MyLog.e(TAG, "Failure on request all restaurant list...");
                     // 服务器不响应
                     // 如果在测试阶段，允许使用瞎编的数据代替那个不争气的服务器所提供的数据
-                    if (!MyLog.LOG) {
+                    if (MyLog.DEBUG) {
                         restaurantList = MakeUpRobot.makeUpRestaurantList();
+                        mToggleIndeterminate = !mToggleIndeterminate;
+                        setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+                        tvLoadInfo.setVisibility(View.GONE);
+                        setTheList();
                     } else {
                         // 不在测试阶段，服务器不响应的话，给用户提示信息
                         actionBar.setTitle(getResources().getString(R.string.title_activity_restaurant_chooser) + "(未连接)");
                         tvAlert.setText(getResources().getString(R.string.msg_alert_server_down));
+                        tvLoadInfo.setVisibility(View.GONE);
                         tvAlert.setVisibility(View.VISIBLE);
                     }
-                    mToggleIndeterminate = !mToggleIndeterminate;
-                    setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
 
                     super.onFailure(error, content);
                 }
@@ -133,8 +139,10 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
 //                        e.printStackTrace();
 //                    }
 
+                    // 取消加载信息
                     mToggleIndeterminate = !mToggleIndeterminate;
                     setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+                    tvLoadInfo.setVisibility(View.GONE);
 
                     // 得到数据后开始加载 list
                     // TODO: 显示成功加载的信息，或者在列表显示完成之后显示
@@ -281,8 +289,8 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Intent detailIntent = new Intent();
-                    detailIntent.setClass(getActivity(), RestaurantDetailActivity.class);
-                    detailIntent.putExtra("tid", restaurantList.get(i).getRest_id());
+                    detailIntent.setClass(getActivity(), RestaurantDishesListActivity.class);
+                    detailIntent.putExtra("rid", restaurantList.get(i).getRest_id());
                     startActivity(detailIntent);
                 }
             });

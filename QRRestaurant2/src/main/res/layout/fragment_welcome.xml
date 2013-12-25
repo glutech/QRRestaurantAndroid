@@ -24,7 +24,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dip"
         android:gravity="center"
-        android:text="\n\n\n二维码点餐\n\n昆明博客科技\n\n" />
+        android:text="\n\n\n二维码点餐" />
 
 
 </RelativeLayout>

@@ -64,8 +64,8 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
     private boolean mToggleIndeterminate = false;
 
-    private static String mTableId;
-    private static String mRestaurantId;
+    private static Long mTableId;
+    private static Long mRestaurantId;
     private View mProgressView;
     ActionBar actionBar = null;
     private AccountManager accountMagager;
@@ -73,6 +73,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
 
     private TextView tvAlert;
+    private TextView tvLoadInfo;
     public static RestaurantWaitressGirl rh;
     public static TextView tvOrderMssage;
 
@@ -95,6 +96,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         setContentView(R.layout.activity_restaurant_dishes_list);
 
         tvAlert = (TextView) findViewById(R.id.tv_alert_dishlist);
+        tvLoadInfo = (TextView) findViewById(R.id.tv_onloading);
         tvOrderMssage = (TextView) findViewById(R.id.tv_order_message);
         btnSelectedCounter = (Button) findViewById(R.id.btn_selected_counter);
 
@@ -141,84 +143,120 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
      * 从而加载数据
      */
     private void loadRestaurantInfo() {
-        Intent intent = getIntent();
 
-        if (!ConnectivityUtil.isOnline(this)) {
+        Intent intent = getIntent();
+        String url = "";
+        String paramKey = "";
+        String paramValue = "";
+
+        if (!ConnectivityUtil.isOnline(this) && !MyLog.DEBUG) {
             // 提示网络连接错误
             MyLog.d(TAG, "没有联网...");
             actionBar.setTitle(getResources().getString(R.string.app_name) + "(未连接)");
             tvAlert.setText(getResources().getString(R.string.msg_alert_network_disconnect));
+            tvLoadInfo.setVisibility(View.GONE);
             tvAlert.setVisibility(View.VISIBLE);
-//            ToastUtil.showShortToast(this, "网络连接错误，请检查网络环境！");
         } else {
-
             // 请求餐厅所有信息
             // 如果过 intent 过来的信息中含有 table id 则开始使用 table id 请求餐厅信息，准备点餐的数据
             if (intent.hasExtra("tid")) {
+                mTableId = Long.parseLong(intent.getStringExtra("tid"));
+                url = Constants.SCAN_TO_ORDER;
+                paramKey = "t_id";
+                paramValue = mTableId.toString();
+            } else if (intent.hasExtra("rid")) {
+                // 如果 intent 过来的信息中含有 restaurant id，意味着是点选餐厅进行点餐，直接使用 rid请求餐厅信息
+                long rid = intent.getLongExtra("rid", -1);
+//                url = Constants.CHOOSE_TO_ORDER;
+//                paramKey = "r_id";
+//                paramValue = String.valueOf(rid);
+                // TODO: 服务器完成接口后回复上面的代码
+                // 目前将就使用tid 完成请求和展示
+                url = Constants.SCAN_TO_ORDER;
+                paramKey = "t_id";
+                paramValue = "2";
+            }
 
-                // 转圈圈
+            retriveData(url, paramKey, paramValue);
+        }
+    }
+
+    /**
+     * 设置好基本元素之后开始请求填充数据
+     * 扫描点餐和预订点餐的请求方式不一样，一个知道桌号ID，获取餐厅菜品列表，一个知道餐厅ID，获取餐厅菜品列表
+     * 所以URL，和参数都不一样，但结果是一样的
+     *
+     * @param url
+     * @param paramKey
+     * @param paramValue
+     */
+    private void retriveData(String url, String paramKey, String paramValue) {
+        // 转圈圈
+        mToggleIndeterminate = !mToggleIndeterminate;
+        setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+        setSupportProgressBarIndeterminate(true);
+
+        RequestParams params = new RequestParams();
+        params.put(paramKey, paramValue);
+        QRRHTTPClient.post(url, params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                MyLog.d(TAG, "Start to post tid to get restaurant info...");
+                super.onStart();
+            }
+
+            @Override
+            public void onFailure(Throwable error, String content) {
+                MyLog.d(TAG, "请求餐厅信息失败 ：" + content);
+                // 停止progress
                 mToggleIndeterminate = !mToggleIndeterminate;
                 setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
-                setSupportProgressBarIndeterminate(true);
 
-                mTableId = intent.getStringExtra("tid");
-                RequestParams params = new RequestParams();
-                params.put("t_id", mTableId);
-                QRRHTTPClient.post(Constants.SCAN_TO_ORDER, params, new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onStart() {
-                        MyLog.d(TAG, "Start to post tid to get restaurant info...");
-                        super.onStart();
+                // 显示错误信息
+                // 在不联网或者没有服务器的时候生成假的数据用于演示使用
+                if (MyLog.DEBUG) {
+                    dishesVo = MakeUpRobot.getDishVo();
+                    if (null != dishesVo) {
+                        // json 数据反序列化成功，得到扫描结果实体，开始填充菜品列表详细数据
+                        MyLog.d(TAG, "Parse json out, restName: " + dishesVo.getRest_name() + " and the dish: " + dishesVo.getDishlist().get(0).getDish_name());
                     }
 
-                    @Override
-                    public void onFailure(Throwable error, String content) {
-                        MyLog.d(TAG, "请求餐厅信息失败 ：" + content);
-                        // 停止progress
-                        mToggleIndeterminate = !mToggleIndeterminate;
-                        setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+                    // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
+                    rh = RestaurantWaitressGirl.getInstance(dishesVo);
 
-                        // 显示错误信息
-                        // 在不联网或者没有服务器的时候生成假的数据用于演示使用
-                        if (MyLog.LOG) {
-                            dishesVo = MakeUpRobot.getDishVo();
-                            if (null != dishesVo) {
-                                // json 数据反序列化成功，得到扫描结果实体，开始填充菜品列表详细数据
-                                MyLog.d(TAG, "Parse json out, restName: " + dishesVo.getRest_name() + " and the dish: " + dishesVo.getDishlist().get(0).getDish_name());
-                            }
+                    tvLoadInfo.setVisibility(View.GONE);
+                    mToggleIndeterminate = !mToggleIndeterminate;
+                    setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
 
-                            // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
-                            rh = RestaurantWaitressGirl.getInstance(dishesVo);
+                    setFragmentPagerTitle();
 
-                            mToggleIndeterminate = !mToggleIndeterminate;
-                            setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+                    // 设置标题
+                    actionBar.setTitle(dishesVo.getRest_name());
+                } else {
+                    tvAlert.setText(getResources().getString(R.string.msg_alert_server_down));
+                    tvLoadInfo.setVisibility(View.GONE);
+                    tvAlert.setVisibility(View.VISIBLE);
+                }
 
-                            setFragmentPagerTitle();
+                super.onFailure(error, content);
+            }
 
-                            // 设置标题
-                            actionBar.setTitle(dishesVo.getRest_name());
-                        } else {
-                            tvAlert.setText(getResources().getString(R.string.msg_alert_server_down));
-                            tvAlert.setVisibility(View.VISIBLE);
-                        }
+            @Override
+            public void onSuccess(String content) {
+                MyLog.d(TAG, "Success get rest info: " + content);
+                // 成功从服务器请求到餐厅信息 json 数据
+                Gson gson = new Gson();
 
-                        super.onFailure(error, content);
-                    }
+                try {
+                    dishesVo = gson.fromJson(content, DishesVo.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-                    @Override
-                    public void onSuccess(String content) {
-                        MyLog.d(TAG, "Success get rest info: " + content);
-                        // 成功从服务器请求到餐厅信息 json 数据
-                        Gson gson = new Gson();
+                mRestaurantId = Long.parseLong(dishesVo.getRest_id());
 
-                        dishesVo = gson.fromJson(content, DishesVo.class);
-                        if (null != dishesVo) {
-                            // json 数据反序列化成功，得到扫描结果实体，开始填充菜品列表详细数据
-                            MyLog.d(TAG, "Parse json out, restName: " + dishesVo.getRest_name() + " and the dish: " + dishesVo.getDishlist().get(0).getDish_name());
-                        }
-
-                        // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
-                        rh = RestaurantWaitressGirl.getInstance(dishesVo);
+                // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
+                rh = RestaurantWaitressGirl.getInstance(dishesVo);
 
 //                        try {
 //                            MyLog.d(TAG, "-------------This is huge--------------------");
@@ -227,24 +265,19 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 //                            e.printStackTrace();
 //                        }
 
-                        mToggleIndeterminate = !mToggleIndeterminate;
-                        setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+                mToggleIndeterminate = !mToggleIndeterminate;
+                setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
+                tvLoadInfo.setVisibility(View.GONE);
 
-                        setFragmentPagerTitle();
+                setFragmentPagerTitle();
 
-                        // 设置标题
-                        actionBar.setTitle(dishesVo.getRest_name());
+                // 设置标题
+                actionBar.setTitle(dishesVo.getRest_name());
 
-                        super.onSuccess(content);
+                super.onSuccess(content);
 
-                    }
-                });
-            } else if (intent.hasExtra("rid")) {
-                // 如果 intent 过来的信息中含有 restaurant id，意味着是点选餐厅进行点餐，直接使用 rid请求餐厅信息
-                // TODO: 使用餐厅 id 请求餐厅信息，准备预订点餐的信息
             }
-
-        }
+        });
     }
 
     private void setFragmentPagerTitle() {
@@ -456,7 +489,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.restaurant_plate_list, menu);
+        getMenuInflater().inflate(R.menu.restaurant_dishes_list, menu);
         return true;
     }
 
@@ -466,7 +499,11 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_info:
+                Intent restDetailIntent = new Intent();
+                restDetailIntent.setClass(RestaurantDishesListActivity.this, RestaurantDetailActivity.class);
+                restDetailIntent.putExtra("rid", mRestaurantId);
+                startActivity(restDetailIntent);
                 return true;
             case android.R.id.home:
                 // This is called when the Home (Up) button is pressed in the action bar.
@@ -477,7 +514,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                 if (mTableId != null) {
                     upIntent = new Intent(this, QRRMainActivity.class);
                 } else {
-                    upIntent = new Intent(this, RestaurantDetailActivity.class);
+                    upIntent = new Intent(this, RestaurantChooserActivity.class);
                 }
 
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {

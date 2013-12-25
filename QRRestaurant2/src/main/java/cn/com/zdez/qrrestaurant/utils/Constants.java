@@ -31,7 +31,8 @@ public final class Constants {
 
     public static final String TABLE_TAKE_POST_URL = "/tables/take"; // 废弃
     public static final String SCAN_TO_ORDER = "/order/scan";
-
+    public static final String CHOOSE_TO_ORDER = "/order/choose"; //TODO: 服务器接口完成后修改
+    public static final String GET_RESTAURANT_INFO = "/book/get_rest";
 
 
 
