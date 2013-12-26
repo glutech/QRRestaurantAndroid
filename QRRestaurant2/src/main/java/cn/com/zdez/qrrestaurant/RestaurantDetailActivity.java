@@ -1,10 +1,6 @@
 package cn.com.zdez.qrrestaurant;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.Handler;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -14,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -26,7 +21,6 @@ import cn.com.zdez.qrrestaurant.http.QRRHTTPClient;
 import cn.com.zdez.qrrestaurant.model.Restaurant;
 import cn.com.zdez.qrrestaurant.utils.Constants;
 import cn.com.zdez.qrrestaurant.utils.MyLog;
-import cn.com.zdez.qrrestaurant.utils.ToastUtil;
 
 /**
  * 从 intent 中取得餐厅编号，到服务器中取得餐厅的详细信息,与扫描无关，与桌号
@@ -73,7 +67,7 @@ public class RestaurantDetailActivity extends ActionBarActivity {
             mRestId = intent.getLongExtra("rid", -1);
             RequestParams params = new RequestParams();
             params.put("r_id", mRestId.toString());
-            QRRHTTPClient.post(Constants.GET_RESTAURANT_INFO, params, new AsyncHttpResponseHandler() {
+            QRRHTTPClient.post(Constants.GET_RESTAURANT_DETAIL, params, new AsyncHttpResponseHandler() {
                 @Override
                 public void onFailure(Throwable error, String content) {
                     tvOnLoad.setVisibility(View.GONE);
@@ -90,6 +84,7 @@ public class RestaurantDetailActivity extends ActionBarActivity {
 
                     try {
                         restaurant = gson.fromJson(content, Restaurant.class);
+//                        Thread.sleep(5000);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

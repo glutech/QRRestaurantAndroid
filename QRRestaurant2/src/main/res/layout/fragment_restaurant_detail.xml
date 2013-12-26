@@ -34,6 +34,8 @@
 
                 <LinearLayout
                     android:orientation="horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -76,66 +78,98 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_marginTop="16dp"
-                    android:padding="10dp"
+                    android:layout_margin="10dp"
                     android:orientation="vertical"
-                    android:background="@color/blue_t"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <TextView
+                    <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:text="地址"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_rec_top_blue_light">
 
-                    <TextView
-                        android:id="@+id/tv_rest_info_addr"
-                        android:layout_marginTop="10dp"
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:padding="3dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/bubbles"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/tv_dish_detail_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="地址"
+                            android:padding="5sp"
+                            android:textColor="@color/result_text"
+                            android:layout_gravity="center" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:text="嘻嘻"
-                        android:layout_height="wrap_content" />
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_white_rect"
+                        android:layout_height="wrap_content">
+
+
+                        <TextView
+                            android:id="@+id/tv_rest_info_addr"
+                            android:layout_width="match_parent"
+                            android:text="暂时没有介绍"
+                            android:padding="10sp"
+                            android:layout_height="wrap_content" />
+
+
+                    </LinearLayout>
+
 
                 </LinearLayout>
 
+
+
                 <LinearLayout
-                    android:layout_marginTop="16dp"
-                    android:padding="10dp"
+                    android:layout_margin="10dp"
                     android:orientation="vertical"
-                    android:background="@color/blue_t"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <TextView
+                    <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:text="网友评论"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_rec_green_light">
 
-                    <TextView
-                        android:layout_marginTop="10dp"
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:padding="3dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/bubbles"
+                            android:layout_height="wrap_content" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="网友评论"
+                            android:padding="5sp"
+                            android:textColor="@color/result_text"
+                            android:layout_gravity="center" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:text="要哈考试的见风使舵就咖啡精神可嘉地方肯德基开放时间快递费几十块大姐夫可视对讲付款守空房几点上课减肥大姐夫啊快速减肥快速减肥看电视剧开房间上岛咖啡街道口积分卡四大皆空附近的"
-                        android:layout_height="wrap_content" />
+                        android:background="@drawable/bg_white_rect"
+                        android:layout_height="wrap_content">
 
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:text="暂时没有评论"
+                            android:padding="10sp"
+                            android:layout_height="wrap_content" />
 
-                <LinearLayout
-                    android:layout_marginTop="16dp"
-                    android:padding="10dp"
-                    android:orientation="vertical"
-                    android:background="@color/blue_t"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    </LinearLayout>
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:text="餐厅基本信息"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:layout_marginTop="10dp"
-                        android:layout_width="match_parent"
-                        android:text="要哈考试的见风使舵就咖啡精神可嘉地方肯德基开放时间快递费几十块大姐夫可视对讲付款守空房几点上课减肥大姐夫啊快速减肥快速减肥看电视剧开房间上岛咖啡街道口积分卡四大皆空附近的"
-                        android:layout_height="wrap_content" />
 
                 </LinearLayout>
 

@@ -30,7 +30,7 @@ public class WelcomeActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        getActionBar().hide();
+        getSupportActionBar().hide();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()

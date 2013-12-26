@@ -76,7 +76,6 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     private TextView tvLoadInfo;
     public static RestaurantWaitressGirl rh;
     public static TextView tvOrderMssage;
-
     public static Button btnSelectedCounter;
 
     public static int TIME = 800;
@@ -92,7 +91,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_restaurant_dishes_list);
 
         tvAlert = (TextView) findViewById(R.id.tv_alert_dishlist);
@@ -167,14 +166,14 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             } else if (intent.hasExtra("rid")) {
                 // 如果 intent 过来的信息中含有 restaurant id，意味着是点选餐厅进行点餐，直接使用 rid请求餐厅信息
                 long rid = intent.getLongExtra("rid", -1);
-//                url = Constants.CHOOSE_TO_ORDER;
-//                paramKey = "r_id";
-//                paramValue = String.valueOf(rid);
-                // TODO: 服务器完成接口后回复上面的代码
-                // 目前将就使用tid 完成请求和展示
-                url = Constants.SCAN_TO_ORDER;
-                paramKey = "t_id";
-                paramValue = "2";
+                url = Constants.CHOOSE_TO_ORDER;
+                paramKey = "r_id";
+                paramValue = String.valueOf(rid);
+//                // TODO: 服务器完成接口后回复上面的代码
+//                // 目前将就使用tid 完成请求和展示
+//                url = Constants.SCAN_TO_ORDER;
+//                paramKey = "t_id";
+//                paramValue = "2";
             }
 
             retriveData(url, paramKey, paramValue);

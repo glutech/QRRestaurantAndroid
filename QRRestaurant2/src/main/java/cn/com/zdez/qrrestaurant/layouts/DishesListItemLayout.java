@@ -37,7 +37,7 @@ public class DishesListItemLayout extends RelativeLayout {
     }
 
     public void setLayout(Dish dish) {
-        findView();
+        findView(dish.getDish_id());
         tvTitle.setText(dish.getDish_name());
         // Set background for display the selected dishes
 
@@ -47,13 +47,14 @@ public class DishesListItemLayout extends RelativeLayout {
         }
     }
 
-    private void findView() {
+    private void findView(final long did) {
         tvTitle = (TextView) findViewById(R.id.tv_dish_title);
         imgCover = (SmartImageView) findViewById(R.id.img_dish_cover);
         imgCover.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent toDishDetail = new Intent();
+                toDishDetail.putExtra("did", did);
                 toDishDetail.setClass(context, DishDetialActivity.class);
                 context.startActivity(toDishDetail);
             }

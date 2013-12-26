@@ -18,7 +18,7 @@ public final class Constants {
 
 
     // HTTP URL, Websocket url
-    public static final String HOST = "192.168.1.118";
+    public static final String HOST = "192.168.1.108";
     public static final String PORT = "8080";
     public static final String WEB_APP_NAME = "qr_restaurant";
     public static final String HTTP_BASE_URL = "http://" + HOST + ":" + PORT + "/" + WEB_APP_NAME;
@@ -31,11 +31,8 @@ public final class Constants {
 
     public static final String TABLE_TAKE_POST_URL = "/tables/take"; // 废弃
     public static final String SCAN_TO_ORDER = "/order/scan";
-    public static final String CHOOSE_TO_ORDER = "/order/choose"; //TODO: 服务器接口完成后修改
-    public static final String GET_RESTAURANT_INFO = "/book/get_rest";
-
-
-
-
+    public static final String CHOOSE_TO_ORDER = "/book/get_dishes";
+    public static final String GET_RESTAURANT_DETAIL = "/book/get_rest";
+    public static final String GET_DISH_DETAIL = "/order/get_comment";
 
 }

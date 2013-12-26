@@ -22,7 +22,7 @@ public class RestaurantWaitressGirl {
     private static DishesVo dishesVo; // 从服务器中取得的数据，需进一步处理
     public Map<String, List<Dish>> catedDishMap = new HashMap<String, List<Dish>>(); // 按照类别存储每一个类别下的 dishlist
     public static RestaurantWaitressGirl instance;
-    public Map<Long, Category> catMap = new HashMap<Long, Category>(); // 按照类别 id 存储每一个类别实体
+    public static Map<Long, Category> catMap = new HashMap<Long, Category>(); // 按照类别 id 存储每一个类别实体
     public String[] categoryNameArray; // dishesVo 中所有的类别名称数组
     public static Map<Long, Dish> dishMap = new HashMap<Long, Dish>(); // 按照 dish id 存储每一个 dish 实体
 

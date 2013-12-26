@@ -49,7 +49,9 @@
                             android:text="火腿木瓜鸡"
                             android:textSize="18sp" />
 
+
                         <TextView
+                            android:id="@+id/tv_dish_detail_price"
                             android:padding="10sp"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
@@ -84,6 +86,7 @@
                             android:layout_height="wrap_content" />
 
                         <TextView
+                            android:id="@+id/tv_dish_detail_desc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="详细描述"
@@ -95,16 +98,35 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
+                        android:orientation="vertical"
                         android:background="@drawable/bg_white_rect"
                         android:layout_height="wrap_content">
 
 
                         <TextView
                             android:layout_width="match_parent"
-                            android:text="阿奎就爱看缴费单空间啊肯德基疯狂世界地方金卡介绍的开房间案例开房间卡绝对开房间上岛咖啡，金卡上岛咖啡连接撒旦开房间卡十几分都是，就爱看事件地方可视对讲阿奎积分卡水电费"
+                            android:text="暂时没有介绍"
                             android:padding="10sp"
 
                             android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/tv_dish_detail_cat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:padding="10sp"
+                            android:text="菜品:"
+                            />
+
+                        <TextView
+                            android:id="@+id/tv_dish_detail_tags"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="标签:"
+                            android:padding="10sp"
+                            android:textColor="@color/ios7_blue"
+                            />
 
                     </LinearLayout>
 
@@ -146,7 +168,7 @@
 
                         <TextView
                             android:layout_width="match_parent"
-                            android:text="阿奎就爱看缴费单空间啊肯德基疯狂世界地方金卡介绍的开房间案例开房间卡绝对开房间上岛咖啡，金卡上岛咖啡连接撒旦开房间卡十几分都是，就爱看事件地方可视对讲阿奎积分卡水电费"
+                            android:text="暂时没有评论"
                             android:padding="10sp"
                             android:layout_height="wrap_content" />
 
@@ -190,7 +212,7 @@
 
                         <TextView
                             android:layout_width="match_parent"
-                            android:text="阿奎就爱看缴费单空间啊肯德基疯狂世界地方金卡介绍的开房间案例开房间卡绝对开房间上岛咖啡，金卡上岛咖啡连接撒旦开房间卡十几分都是，就爱看事件地方可视对讲阿奎积分卡水电费"
+                            android:text="暂时没有其他的东西"
                             android:padding="10sp"
                             android:layout_height="wrap_content" />
 
