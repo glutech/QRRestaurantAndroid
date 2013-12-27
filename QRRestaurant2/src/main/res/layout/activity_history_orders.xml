@@ -1,0 +1,26 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cn.com.zdez.qrrestaurant.HistoryOrdersActivity"
+    tools:ignore="MergeRootFrame">
+
+    <TextView
+        android:id="@+id/tv_history_orders_alert"
+        android:gravity="center"
+        android:background="@color/red_light_t_80"
+        android:text="提示消息"
+        android:padding="5sp"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_history_orders_onload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="正在加载..."
+        android:padding="5sp"
+        android:gravity="center_horizontal" />
+</FrameLayout>

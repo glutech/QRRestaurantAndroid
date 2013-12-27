@@ -71,7 +71,9 @@ public class QRRMainActivity extends ActionBarActivity {
         btn_to_booked.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AutobahnTest.start();
+                Intent userInfoIntent = new Intent();
+                userInfoIntent.setClass(QRRMainActivity.this, UserInfoActivity.class);
+                startActivity(userInfoIntent);
             }
         });
 

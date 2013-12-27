@@ -291,7 +291,8 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Intent detailIntent = new Intent();
                     detailIntent.setClass(getActivity(), RestaurantDishesListActivity.class);
-                    detailIntent.putExtra("rid", restaurantList.get(i).getRest_id());
+//                    detailIntent.putExtra("rid", restaurantList.get(i).getRest_id());
+                    detailIntent.putExtra("tid", "2");
                     startActivity(detailIntent);
                 }
             });

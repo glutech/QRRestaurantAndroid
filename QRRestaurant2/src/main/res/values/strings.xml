@@ -142,5 +142,7 @@
     <string name="title_activity_selected_dishes">已选择的菜品</string>
     <string name="msg_alert_network_disconnect">当前网络不可用，请检查网络设置...</string>
     <string name="msg_alert_server_down">服务连接出错，请稍候再试...</string>
+    <string name="title_activity_history_orders">我的订单</string>
+    <string name="title_activity_user_info">个人中心</string>
 
 </resources>

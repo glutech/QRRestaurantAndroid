@@ -43,6 +43,10 @@ import cn.com.zdez.qrrestaurant.utils.Constants;
 import cn.com.zdez.qrrestaurant.layouts.DishesListAdapter;
 import cn.com.zdez.qrrestaurant.utils.MyLog;
 import cn.com.zdez.qrrestaurant.vo.DishesVo;
+import cn.com.zdez.qrrestaurant.websockets.OrderMsgWSHandler;
+import cn.com.zdez.qrrestaurant.websockets.WSConnection;
+import cn.com.zdez.qrrestaurant.websockets.WSConnectionClient;
+import de.tavendo.autobahn.WebSocketConnection;
 
 /**
  * 餐厅菜品展示界面，用于扫描之后开始点菜，也可以在餐厅详细信息界面手动点击"点菜"选项进入（用于用户远程预约）
@@ -81,6 +85,8 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     public static int TIME = 800;
     public static Handler handler = new Handler();
     public static Runnable runnable;
+
+    public static WebSocketConnection wsConnection;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -130,6 +136,12 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
         // 加载餐厅信息和菜品
         loadRestaurantInfo();
+
+        // 如果现场点餐的话，需要协同点餐模块
+        if (mTableId != null && mTableId >= 0) {
+            fireUpCollaborationOrder();
+        }
+
         setSelectIntent();
 
         // 添加返回箭头
@@ -163,6 +175,8 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                 url = Constants.SCAN_TO_ORDER;
                 paramKey = "t_id";
                 paramValue = mTableId.toString();
+
+
             } else if (intent.hasExtra("rid")) {
                 // 如果 intent 过来的信息中含有 restaurant id，意味着是点选餐厅进行点餐，直接使用 rid请求餐厅信息
                 long rid = intent.getLongExtra("rid", -1);
@@ -227,6 +241,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                     mToggleIndeterminate = !mToggleIndeterminate;
                     setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
 
+                    // 加载列表 fragment
                     setFragmentPagerTitle();
 
                     // 设置标题
@@ -267,6 +282,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                 mToggleIndeterminate = !mToggleIndeterminate;
                 setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
                 tvLoadInfo.setVisibility(View.GONE);
+
 
                 setFragmentPagerTitle();
 
@@ -434,6 +450,9 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                     String selectItem = dishList.get(position).getDish_name();
 
                     if (rh.isSelected(dishList.get(position).getDish_id())) {
+                        // 协同点餐时,要先发送消息
+                        sendWSMessage("DELETE " + String.valueOf(QRRestaurantApplication.accountManager.mUserId) + " " + dishList.get(position).getDish_id());
+
                         // 之前又被点选过，所以现在去除
                         int left = rh.removeSelection(dishList.get(position).getDish_id());
 
@@ -453,6 +472,9 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                         dishesListView.invalidateViews();
                     } else {
                         // 之前没被点选过，添加选择
+                        // 协同点餐时,要先发送消息
+                        sendWSMessage("ADD " + String.valueOf(QRRestaurantApplication.accountManager.mUserId) + " " + dishList.get(position).getDish_id());
+
                         rh.addNewSelection(dishList.get(position).getDish_id());
                         tvOrderMssage.setText("选择了" + selectItem);
                         tvOrderMssage.setVisibility(View.VISIBLE);
@@ -464,6 +486,17 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             });
 
             return rootView;
+        }
+
+        /**
+         * 使用创建好的 WSConnection 给服务器点餐模块发送消
+         *
+         * @param payload
+         */
+        private static void sendWSMessage(String payload) {
+            // TODO: 为了增强容错性，要对这个操作的返回值进行判断，并决定接下来对用户的提示，和本地菜单的更新
+            // TODO: 但并非直接返回，而是要在返回消息中监测返回的错误提示类型
+            wsConnection.sendTextMessage(payload);
         }
 
         @Override
@@ -483,6 +516,19 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             dishesListView.invalidateViews();
             super.onPause();
         }
+    }
+
+    /**
+     * 创建协同点餐的 WS 连接模块
+     */
+    private static void fireUpCollaborationOrder() {
+        // 在加载列表之前先连接 WS 服务
+        WSConnectionClient client = new WSConnectionClient();
+
+        wsConnection = client.connect(Constants.ORDERING_MODULE_WS_URL,
+                String.valueOf(mTableId),
+                String.valueOf(QRRestaurantApplication.accountManager.mUserId),
+                new OrderMsgWSHandler(tvOrderMssage, handler, runnable, TIME));
     }
 
     @Override

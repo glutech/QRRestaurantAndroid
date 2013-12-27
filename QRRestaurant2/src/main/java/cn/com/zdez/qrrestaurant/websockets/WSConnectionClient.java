@@ -12,16 +12,24 @@ import de.tavendo.autobahn.WebSocketHandler;
 public class WSConnectionClient {
 
     private static String TAG = WSConnectionClient.class.getSimpleName();
-    private static WebSocketConnection connection = new WebSocketConnection();
+    public WebSocketConnection connection;
 
-    public static void connect(String relativeUrl, String tid, String uid, WebSocketHandler wsHandler) {
+    public WSConnectionClient() {
+        connection = new WebSocketConnection();
+    }
+
+
+    public WebSocketConnection connect(String relativeUrl, String tid, String uid, WebSocketHandler wsHandler) {
         String absUrlWithParams = Constants.WEBSOCKET_BASE_URL + relativeUrl + "?tid=" + tid + "&uid=" + uid;
 
+        MyLog.d(TAG, "Generated URL: " + absUrlWithParams);
         try {
             connection.connect(absUrlWithParams, wsHandler);
         } catch (WebSocketException e) {
             e.printStackTrace();
             MyLog.e(TAG, "Got wrong at connect to ws server...");
         }
+
+        return this.connection;
     }
 }

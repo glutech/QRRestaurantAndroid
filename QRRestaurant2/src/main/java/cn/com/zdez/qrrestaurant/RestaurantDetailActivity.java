@@ -158,7 +158,6 @@ public class RestaurantDetailActivity extends ActionBarActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_restaurant_detail, container, false);
             btnStartOrder = (Button) rootView.findViewById(R.id.btn_start_order);
-            Button btnTemp = (Button) rootView.findViewById(R.id.btn_temp);
             tvRestName = (TextView) rootView.findViewById(R.id.tv_rest_info_name);
             tvAddr = (TextView) rootView.findViewById(R.id.tv_rest_info_addr);
             tvLabel = (TextView) rootView.findViewById(R.id.tv_rest_info_label);
@@ -166,16 +165,6 @@ public class RestaurantDetailActivity extends ActionBarActivity {
             tvRestName.setText(restaurant.getRest_name());
             tvAddr.setText(restaurant.getRest_addr());
             tvLabel.setText(restaurant.getRest_type());
-
-            btnTemp.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent toDishDetail = new Intent();
-                    toDishDetail.putExtra("tid", "2");
-                    toDishDetail.setClass(getActivity(), DishDetialActivity.class);
-                    startActivity(toDishDetail);
-                }
-            });
 
             btnStartOrder.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -32,7 +32,7 @@
         android:layout_height="60dp"
         android:id="@+id/btn_to_booked"
         android:textSize="22sp"
-        android:text="我的预订"
+        android:text="个人中心"
         android:background="@color/purple_light_t"
         android:layout_marginTop="30dp"
         />
