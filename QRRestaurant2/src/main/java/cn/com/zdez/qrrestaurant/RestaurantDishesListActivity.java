@@ -606,4 +606,10 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        wsConnection.disconnect();
+    }
 }

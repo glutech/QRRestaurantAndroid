@@ -82,7 +82,7 @@ public class OrderMsgWSHandler extends WebSocketHandler {
                 break;
             case NOTSURE:
                 // 没有定义的消息类型
-                MyLog.d("WS点菜模块", "乱七八糟，不知道这时什么消息： " + payload);
+                MyLog.d("WS点菜模块", "其他消息： " + payload);
                 break;
         }
     }
