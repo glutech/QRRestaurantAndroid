@@ -2,6 +2,8 @@ package cn.com.zdez.qrrestaurant.websockets;
 
 import android.os.Handler;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import cn.com.zdez.qrrestaurant.helper.RestaurantWaitressGirl;
@@ -14,18 +16,24 @@ import de.tavendo.autobahn.WebSocketHandler;
  * Created by LuoHanLin on 13-12-27.
  */
 public class OrderMsgWSHandler extends WebSocketHandler {
+    private RestaurantWaitressGirl girl;
+    private Button btnSelector;
     private TextView tvOrderMessage;
     private static String TAG = "OrderMsgWSHandler";
     private Handler handler;
     private Runnable runnable;
     private int TIME;
 
-    public OrderMsgWSHandler(TextView tv, Handler handler, Runnable runnable, int TIME) {
+
+
+    public OrderMsgWSHandler(RestaurantWaitressGirl girl, Button btnSelectedCounter, TextView tvOrderMessage, Handler handler, Runnable runnable, int time) {
         super();
-        this.tvOrderMessage = tv;
+        this.girl = girl;
+        this.btnSelector = btnSelectedCounter;
+        this.tvOrderMessage = tvOrderMessage;
         this.handler = handler;
         this.runnable = runnable;
-        this.TIME = TIME;
+        this.TIME = time;
     }
 
     @Override
@@ -54,9 +62,12 @@ public class OrderMsgWSHandler extends WebSocketHandler {
                 msgBody = msgs[2];
                 // 有菜品 id 取得菜品名称 TODO: try catch it
                 dishName = RestaurantWaitressGirl.dishMap.get(Long.parseLong(msgBody)).getDish_name();
+
+                girl.addNewSelection(Long.parseLong(msgBody));
                 tvOrderMessage.setText("++小伙伴@" + msgBy + "增加了[" + dishName + "]");
                 tvOrderMessage.setVisibility(View.VISIBLE);
                 handler.postDelayed(runnable, TIME);
+                btnSelector.setText("已点：" + girl.totalSelection());
                 break;
             case DELETE:
                 // 用户删除菜品
@@ -64,9 +75,20 @@ public class OrderMsgWSHandler extends WebSocketHandler {
                 msgBody = msgs[2];
                 // 有菜品 id 取得菜品名称 TODO: try catch it
                 dishName = RestaurantWaitressGirl.dishMap.get(Long.parseLong(msgBody)).getDish_name();
+
+                // 之前又被点选过，所以现在去除
+                int left = girl.removeSelection(Long.parseLong(msgBody));
+
+                // 自定义 TextView,具体点选提示
+                if (left > 0) {
+                    tvOrderMessage.setText("将" + dishName + "的数量减少1");
+                } else {
+                    tvOrderMessage.setText("取消" + dishName);
+                }
                 tvOrderMessage.setText("--小伙伴@" + msgBy + "删除了[" + dishName + "]");
                 tvOrderMessage.setVisibility(View.VISIBLE);
                 handler.postDelayed(runnable, TIME);
+                btnSelector.setText("已点：" + girl.totalSelection());
                 break;
             case JOIN:
                 msgBy = msgs[1];

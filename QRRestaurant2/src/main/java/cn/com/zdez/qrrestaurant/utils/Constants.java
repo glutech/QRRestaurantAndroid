@@ -18,7 +18,7 @@ public final class Constants {
 
 
     // HTTP URL, Websocket url
-    public static final String HOST = "192.168.1.108";
+    public static final String HOST = "192.168.1.103";
     public static final String PORT = "8080";
     public static final String WEB_APP_NAME = "qr_restaurant";
     public static final String HTTP_BASE_URL = "http://" + HOST + ":" + PORT + "/" + WEB_APP_NAME;

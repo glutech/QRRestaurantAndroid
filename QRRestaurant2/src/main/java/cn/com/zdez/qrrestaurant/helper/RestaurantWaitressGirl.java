@@ -13,6 +13,7 @@ import cn.com.zdez.qrrestaurant.model.Dish;
 import cn.com.zdez.qrrestaurant.utils.DishOrderedComparator;
 import cn.com.zdez.qrrestaurant.utils.DishRecommendedComparator;
 import cn.com.zdez.qrrestaurant.vo.DishesVo;
+import de.tavendo.autobahn.WebSocketConnection;
 
 /**
  * Created by LuoHanLin on 13-12-18.
@@ -30,19 +31,22 @@ public class RestaurantWaitressGirl {
     public static HashMap<Long, Integer> selection = new HashMap<Long, Integer>();
     public static int totalSelection = 0;
 
-    private RestaurantWaitressGirl(DishesVo dishesVo) {
+    // 协同点菜过程的ws 连接
+    public static WebSocketConnection wsConnection;
+
+    public RestaurantWaitressGirl(DishesVo dishesVo) {
         this.dishesVo = dishesVo;
         mapingCategory();
         makeCategory(); // 在生成对象的时候处理排序、分类操作
         makeCategoryNameList();
     }
 
-    public static RestaurantWaitressGirl getInstance(DishesVo dishesVo) {
-        if (null == instance) {
-            instance = new RestaurantWaitressGirl(dishesVo);
-        }
-        return instance;
-    }
+//    public static RestaurantWaitressGirl getInstance(DishesVo dishesVo) {
+//        if (null == instance) {
+//            instance = new RestaurantWaitressGirl(dishesVo);
+//        }
+//        return instance;
+//    }
 
     /**
      * 按类别和推荐、排行整理菜品,map索引是类别名称，索引到的值是 dish 的 list
@@ -145,12 +149,12 @@ public class RestaurantWaitressGirl {
         return -1;
     }
 
-    public static void clearAllSelection() {
+    public void clearAllSelection() {
         selection = new HashMap<Long, Integer>();
         totalSelection = 0;
     }
 
-    public static int totalSelection(){
+    public int totalSelection(){
         return totalSelection;
     }
 
