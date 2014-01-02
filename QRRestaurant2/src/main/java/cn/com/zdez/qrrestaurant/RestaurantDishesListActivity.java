@@ -634,6 +634,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         MyLog.d(TAG, "Just on Resume.........................");
         if(girl != null && girl.wsMsgHandler != null){
             girl.wsMsgHandler.isInSelectedListActivity = false;
+            btnSelectedCounter.setText("已点：" + girl.totalSelection());
         }
     }
 

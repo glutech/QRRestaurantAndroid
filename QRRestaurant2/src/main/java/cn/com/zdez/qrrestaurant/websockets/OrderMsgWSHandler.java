@@ -103,6 +103,13 @@ public class OrderMsgWSHandler extends WebSocketHandler {
                 msg = "??小伙伴@" + msgBy + "离开点菜队伍了";
                 showMsg(msg);
                 break;
+            case SYNC_DATA:
+                msgBy = msgs[1];
+                msgBody = msgs[2];
+                girl.addNewSelection(Long.parseLong(msgBody));
+                MyLog.d(TAG, "Got a data sync, add " + msgBody + " by " + msgBy);
+                refreshView();
+                break;
             case NOTSURE:
                 // 没有定义的消息类型
                 MyLog.d("WS点菜模块", "其他消息： " + payload);
@@ -124,6 +131,20 @@ public class OrderMsgWSHandler extends WebSocketHandler {
             tvOrderMessage.setText(msg);
             tvOrderMessage.setVisibility(View.VISIBLE);
             handler.postDelayed(runnable, TIME);
+            btnSelector.setText("已点：" + girl.totalSelection());
+            RestaurantDishesListActivity.valideTheCurrentListView();
+        }
+
+    }
+
+
+    /**
+     * 有新的数据同步过来，只刷新列表，不进行提示
+     */
+    private void refreshView(){
+        if(isInSelectedListActivity){
+            adapter.notifyDataSetChanged();
+        }else{
             btnSelector.setText("已点：" + girl.totalSelection());
             RestaurantDishesListActivity.valideTheCurrentListView();
         }
