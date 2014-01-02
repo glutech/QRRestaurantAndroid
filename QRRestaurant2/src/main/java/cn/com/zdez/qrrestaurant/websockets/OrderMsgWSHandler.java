@@ -6,7 +6,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import cn.com.zdez.qrrestaurant.RestaurantDishesListActivity;
 import cn.com.zdez.qrrestaurant.helper.RestaurantWaitressGirl;
+import cn.com.zdez.qrrestaurant.layouts.DishesSelectedAdapter;
 import cn.com.zdez.qrrestaurant.utils.MyLog;
 import cn.com.zdez.qrrestaurant.utils.WSMsgType;
 import de.tavendo.autobahn.WebSocketHandler;
@@ -23,8 +25,12 @@ public class OrderMsgWSHandler extends WebSocketHandler {
     private Handler handler;
     private Runnable runnable;
     private int TIME;
-
-
+    public static boolean isInSelectedListActivity = false;
+    private Handler handlerInSelectedList;
+    private Runnable runnableInSelectedList;
+    private TextView tvOMSGInSelectedList;
+    private TextView tvSelectCountInSelectedList;
+    private DishesSelectedAdapter adapter;
 
     public OrderMsgWSHandler(RestaurantWaitressGirl girl, Button btnSelectedCounter, TextView tvOrderMessage, Handler handler, Runnable runnable, int time) {
         super();
@@ -53,6 +59,7 @@ public class OrderMsgWSHandler extends WebSocketHandler {
         String msgBy = "";
         String msgBody = "";
         String dishName = "";
+        String msg = "";
 
         // TODO: 验证 msgBody 是否是数字
         switch (WSMsgType.toMsgType(msgHead.toUpperCase())) {
@@ -64,10 +71,9 @@ public class OrderMsgWSHandler extends WebSocketHandler {
                 dishName = RestaurantWaitressGirl.dishMap.get(Long.parseLong(msgBody)).getDish_name();
 
                 girl.addNewSelection(Long.parseLong(msgBody));
-                tvOrderMessage.setText("++小伙伴@" + msgBy + "增加了[" + dishName + "]");
-                tvOrderMessage.setVisibility(View.VISIBLE);
-                handler.postDelayed(runnable, TIME);
-                btnSelector.setText("已点：" + girl.totalSelection());
+                msg = "++小伙伴@" + msgBy + "增加了[" + dishName + "]";
+                showMsg(msg);
+
                 break;
             case DELETE:
                 // 用户删除菜品
@@ -81,32 +87,55 @@ public class OrderMsgWSHandler extends WebSocketHandler {
 
                 // 自定义 TextView,具体点选提示
                 if (left > 0) {
-                    tvOrderMessage.setText("将" + dishName + "的数量减少1");
+                    msg = "--小伙伴@" + msgBy + "将" + dishName + "的数量减少1";
                 } else {
-                    tvOrderMessage.setText("取消" + dishName);
+                    msg = "--小伙伴@" + msgBy + "取消" + dishName;
                 }
-                tvOrderMessage.setText("--小伙伴@" + msgBy + "删除了[" + dishName + "]");
-                tvOrderMessage.setVisibility(View.VISIBLE);
-                handler.postDelayed(runnable, TIME);
-                btnSelector.setText("已点：" + girl.totalSelection());
+                showMsg(msg);
                 break;
             case JOIN:
                 msgBy = msgs[1];
-                tvOrderMessage.setText("!!小伙伴@" + msgBy + "加入到点菜队伍了");
-                tvOrderMessage.setVisibility(View.VISIBLE);
-                handler.postDelayed(runnable, TIME);
+                msg = "!!小伙伴@" + msgBy + "加入到点菜队伍了";
+                showMsg(msg);
                 break;
             case LEAVE:
                 msgBy = msgs[1];
-                tvOrderMessage.setText("??小伙伴@" + msgBy + "离开点菜队伍了");
-                tvOrderMessage.setVisibility(View.VISIBLE);
-                handler.postDelayed(runnable, TIME);
+                msg = "??小伙伴@" + msgBy + "离开点菜队伍了";
+                showMsg(msg);
                 break;
             case NOTSURE:
                 // 没有定义的消息类型
                 MyLog.d("WS点菜模块", "其他消息： " + payload);
                 break;
         }
+    }
+
+    /**
+     * 统一地向用户界面显示提示消息，在里面区分在菜品列表界面还是已选界面
+     * @param msg
+     */
+    private void showMsg(String msg){
+        if(isInSelectedListActivity){
+            tvOMSGInSelectedList.setText(msg);
+            tvOMSGInSelectedList.setVisibility(View.VISIBLE);
+            handlerInSelectedList.postDelayed(runnableInSelectedList, TIME);
+            adapter.notifyDataSetChanged();
+        }else{
+            tvOrderMessage.setText(msg);
+            tvOrderMessage.setVisibility(View.VISIBLE);
+            handler.postDelayed(runnable, TIME);
+            btnSelector.setText("已点：" + girl.totalSelection());
+            RestaurantDishesListActivity.valideTheCurrentListView();
+        }
+
+    }
+
+    public void setInSelectedList(TextView tv, Handler handler, Runnable runnable, DishesSelectedAdapter adapter){
+        isInSelectedListActivity = true;
+        this.tvOMSGInSelectedList = tv;
+        this.handlerInSelectedList = handler;
+        this.runnableInSelectedList = runnable;
+        this.adapter = adapter;
     }
 
     @Override

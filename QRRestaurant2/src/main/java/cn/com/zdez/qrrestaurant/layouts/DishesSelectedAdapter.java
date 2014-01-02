@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import java.util.List;
 
 import cn.com.zdez.qrrestaurant.R;
+import cn.com.zdez.qrrestaurant.helper.RestaurantWaitressGirl;
 import cn.com.zdez.qrrestaurant.model.Dish;
 
 /**
@@ -17,10 +18,12 @@ public class DishesSelectedAdapter extends ArrayAdapter<Dish> {
 
     private static String TAG = DishesSelectedAdapter.class.getSimpleName();
     private Context context;
+    private RestaurantWaitressGirl girl;
 
-    public DishesSelectedAdapter(Context context, int resource, List<Dish> objects) {
-        super(context, resource, objects);
+    public DishesSelectedAdapter(Context context, int resource, RestaurantWaitressGirl girl) {
+        super(context, resource, girl.getSelectedDishList());
         this.context = context;
+        this.girl = girl;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class DishesSelectedAdapter extends ArrayAdapter<Dish> {
 
         v = (SelectedItemLayout) View.inflate(context, R.layout.list_item_for_selected, null);
 
-        v.setLayout(getItem(position));
+        v.setLayout(getItem(position), girl);
 
         return v;
     }

@@ -13,6 +13,7 @@ import cn.com.zdez.qrrestaurant.model.Dish;
 import cn.com.zdez.qrrestaurant.utils.DishOrderedComparator;
 import cn.com.zdez.qrrestaurant.utils.DishRecommendedComparator;
 import cn.com.zdez.qrrestaurant.vo.DishesVo;
+import cn.com.zdez.qrrestaurant.websockets.OrderMsgWSHandler;
 import de.tavendo.autobahn.WebSocketConnection;
 
 /**
@@ -32,7 +33,8 @@ public class RestaurantWaitressGirl {
     public static int totalSelection = 0;
 
     // 协同点菜过程的ws 连接
-    public static WebSocketConnection wsConnection;
+    public WebSocketConnection wsConnection;
+    public OrderMsgWSHandler wsMsgHandler;
 
     public RestaurantWaitressGirl(DishesVo dishesVo) {
         this.dishesVo = dishesVo;
@@ -41,12 +43,12 @@ public class RestaurantWaitressGirl {
         makeCategoryNameList();
     }
 
-//    public static RestaurantWaitressGirl getInstance(DishesVo dishesVo) {
-//        if (null == instance) {
-//            instance = new RestaurantWaitressGirl(dishesVo);
-//        }
-//        return instance;
-//    }
+    public static RestaurantWaitressGirl getInstance(DishesVo dishesVo) {
+        if (null == instance) {
+            instance = new RestaurantWaitressGirl(dishesVo);
+        }
+        return instance;
+    }
 
     /**
      * 按类别和推荐、排行整理菜品,map索引是类别名称，索引到的值是 dish 的 list
@@ -109,7 +111,7 @@ public class RestaurantWaitressGirl {
         }
     }
 
-    public static void addNewSelection(Long did) {
+    public void addNewSelection(Long did) {
         if(!selection.containsKey(did)){
             selection.put(did, 1);
         }else{
@@ -133,7 +135,7 @@ public class RestaurantWaitressGirl {
      * @param did 菜品 id
      * @return 已选择列表中没有这个菜的话返回-1（错误）,成功减少数目并且现有数目大于0则返回当前个数，成功减少并且为0的话返回0
      */
-    public static int removeSelection(Long did) {
+    public int removeSelection(Long did) {
         if (selection.containsKey(did)) {
             if(selection.get(did) == 1){
                 selection.remove(did);
@@ -158,7 +160,7 @@ public class RestaurantWaitressGirl {
         return totalSelection;
     }
 
-    public static List<Dish> getSelectedDishList(){
+    public List<Dish> getSelectedDishList(){
         List<Dish> seletedDishList = new ArrayList<Dish>();
 
         Iterator iter2 = selection.entrySet().iterator();

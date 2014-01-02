@@ -7,9 +7,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import cn.com.zdez.qrrestaurant.QRRestaurantApplication;
 import cn.com.zdez.qrrestaurant.R;
 import cn.com.zdez.qrrestaurant.helper.RestaurantWaitressGirl;
 import cn.com.zdez.qrrestaurant.model.Dish;
+import cn.com.zdez.qrrestaurant.model.Restaurant;
 import cn.com.zdez.qrrestaurant.utils.ToastUtil;
 
 /**
@@ -17,6 +19,7 @@ import cn.com.zdez.qrrestaurant.utils.ToastUtil;
  */
 public class SelectedItemLayout extends RelativeLayout {
 
+    private RestaurantWaitressGirl theGirl;
     private Context context;
     private TextView tvName;
     private TextView tvCount;
@@ -30,9 +33,10 @@ public class SelectedItemLayout extends RelativeLayout {
         this.context = context;
     }
 
-    public void setLayout(Dish dish) {
+    public void setLayout(Dish dish, RestaurantWaitressGirl girl) {
         findView(dish.getDish_id());
 
+        theGirl = girl;
         // render data to view
         tvName.setText(dish.getDish_name());
         tvCount.setText("x" + RestaurantWaitressGirl.selection.get(dish.getDish_id()).toString());
@@ -59,21 +63,23 @@ public class SelectedItemLayout extends RelativeLayout {
         btnAddOne.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                RestaurantWaitressGirl.addNewSelection(did);
+                theGirl.addNewSelection(did);
                 tvCount.setText("x" + RestaurantWaitressGirl.selection.get(did).toString());
+                theGirl.wsConnection.sendTextMessage("ADD " + String.valueOf(QRRestaurantApplication.accountManager.mUserId) + " " + did);
             }
         });
         btnDeletedOne.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(RestaurantWaitressGirl.removeSelection(did) <= 0){
+                if(theGirl.removeSelection(did) <= 0){
                     // 点击之前剩1，减少之后就没有这个菜的选项了，
                     //TODO: 给个提示,并且直接在列表中删除，而不是显示数目为 0
                     ToastUtil.showShortToast(context, "这个菜品被取消了");
                     tvCount.setText("x0");
                 }else{
-                    tvCount.setText("x" + RestaurantWaitressGirl.selection.get(did).toString());
+                    tvCount.setText("x" + theGirl.selection.get(did).toString());
                 }
+                theGirl.wsConnection.sendTextMessage("DELETE " + String.valueOf(QRRestaurantApplication.accountManager.mUserId) + " " + did);
 
             }
         });

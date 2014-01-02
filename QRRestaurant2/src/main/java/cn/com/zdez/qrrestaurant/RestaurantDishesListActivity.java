@@ -31,7 +31,9 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.com.zdez.qrrestaurant.account.AccountManager;
 import cn.com.zdez.qrrestaurant.helper.MakeUpRobot;
@@ -85,11 +87,10 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     public static Runnable runnable;
 
 
-
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    ViewPager mViewPager;
+    public static ViewPager mViewPager;
     private static String TAG = RestaurantDishesListActivity.class.getSimpleName();
 
     @Override
@@ -97,6 +98,8 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_restaurant_dishes_list);
+
+        MyLog.d(TAG, "Just on create..........................");
 
         tvAlert = (TextView) findViewById(R.id.tv_alert_dishlist);
         tvLoadInfo = (TextView) findViewById(R.id.tv_onloading);
@@ -112,7 +115,6 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             @Override
             public void run() {
                 try {
-                    MyLog.d(TAG, "Got the runnable work finally");
                     tvOrderMessage.setVisibility(View.GONE);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -135,10 +137,6 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         // 加载餐厅信息和菜品
         loadRestaurantInfo();
 
-        // 如果现场点餐的话，需要协同点餐模块
-        if (mTableId != null && mTableId >= 0) {
-            fireUpCollaborationOrder();
-        }
 
         setSelectIntent();
 
@@ -173,19 +171,12 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                 url = Constants.SCAN_TO_ORDER;
                 paramKey = "t_id";
                 paramValue = mTableId.toString();
-
-
             } else if (intent.hasExtra("rid")) {
                 // 如果 intent 过来的信息中含有 restaurant id，意味着是点选餐厅进行点餐，直接使用 rid请求餐厅信息
                 long rid = intent.getLongExtra("rid", -1);
                 url = Constants.CHOOSE_TO_ORDER;
                 paramKey = "r_id";
                 paramValue = String.valueOf(rid);
-//                // TODO: 服务器完成接口后回复上面的代码
-//                // 目前将就使用tid 完成请求和展示
-//                url = Constants.SCAN_TO_ORDER;
-//                paramKey = "t_id";
-//                paramValue = "2";
             }
 
             retriveData(url, paramKey, paramValue);
@@ -268,7 +259,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                 mRestaurantId = Long.parseLong(dishesVo.getRest_id());
 
                 // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
-                girl = new RestaurantWaitressGirl(dishesVo);
+                girl = RestaurantWaitressGirl.getInstance(dishesVo);
 
 //                        try {
 //                            MyLog.d(TAG, "-------------This is huge--------------------");
@@ -286,6 +277,11 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
                 // 设置标题
                 actionBar.setTitle(dishesVo.getRest_name());
+
+                // 如果现场点餐的话，需要协同点餐模块
+                if (mTableId != null && mTableId >= 0) {
+                    fireUpCollaborationOrder();
+                }
 
                 super.onSuccess(content);
 
@@ -368,6 +364,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         DishesListAdapter dishesListAdapter;
         List<Dish> dishList;
         String tableName;
+        public static Map<Integer, ListView> lvs = new HashMap<Integer, ListView>();
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -378,6 +375,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
+
             return fragment;
         }
 
@@ -438,6 +436,8 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             dishesListView.setItemsCanFocus(false);
             dishesListView.setClickable(true);
 
+            lvs.put(getArguments().getInt(ARG_SECTION_NUMBER), dishesListView);
+
             // 列表点击事件，处理菜单选择操作
             dishesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -494,7 +494,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         private static void sendWSMessage(String payload) {
             // TODO: 为了增强容错性，要对这个操作的返回值进行判断，并决定接下来对用户的提示，和本地菜单的更新
             // TODO: 但并非直接返回，而是要在返回消息中监测返回的错误提示类型
-             girl.wsConnection.sendTextMessage(payload);
+            girl.wsConnection.sendTextMessage(payload);
         }
 
         @Override
@@ -514,6 +514,10 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             dishesListView.invalidateViews();
             super.onPause();
         }
+
+        public static void invalidateCurrentListView(int sectionNumber) {
+            lvs.get(sectionNumber).invalidateViews();
+        }
     }
 
     /**
@@ -523,11 +527,15 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         // 在加载列表之前先连接 WS 服务
         WSConnectionClient client = new WSConnectionClient();
 
-        // TODO: Very kinny
+        OrderMsgWSHandler omwsh = new OrderMsgWSHandler(girl, btnSelectedCounter, tvOrderMessage, handler, runnable, TIME);
+        girl.wsMsgHandler = omwsh;
+
+        // TODO: Very Very tricky
         girl.wsConnection = client.connect(Constants.ORDERING_MODULE_WS_URL,
                 String.valueOf(mTableId),
                 String.valueOf(QRRestaurantApplication.accountManager.mUserId),
-                new OrderMsgWSHandler(girl, btnSelectedCounter, tvOrderMessage, handler, runnable, TIME));
+                omwsh);
+
     }
 
     @Override
@@ -595,11 +603,16 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     }
 
 
+    /**
+     * 跳转到已选界面，将继续进行点菜和消息提示
+     */
     private void setSelectIntent() {
         btnSelectedCounter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent toSelectedList = new Intent();
+                // 需要在 activity 之间
+                QRRestaurantApplication.setGirl(girl);
                 toSelectedList.setClass(RestaurantDishesListActivity.this, SelectedDishesActivity.class);
                 startActivity(toSelectedList);
             }
@@ -609,7 +622,22 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        MyLog.d(TAG, "Just on Destroy......................");
         girl.wsConnection.disconnect();
+        girl.clearAllSelection();
         girl.wsConnection = null;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyLog.d(TAG, "Just on Resume.........................");
+        if(girl != null && girl.wsMsgHandler != null){
+            girl.wsMsgHandler.isInSelectedListActivity = false;
+        }
+    }
+
+    public static void valideTheCurrentListView() {
+        PlaceholderFragment.invalidateCurrentListView(mViewPager.getCurrentItem() + 1);
     }
 }

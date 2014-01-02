@@ -1,6 +1,7 @@
 package cn.com.zdez.qrrestaurant;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBarActivity;
@@ -12,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,12 +26,33 @@ import cn.com.zdez.qrrestaurant.model.Dish;
 public class SelectedDishesActivity extends ActionBarActivity {
 
     ActionBar actionBar;
+    public static RestaurantWaitressGirl girl;
+    private static Runnable runnable;
+    public static Handler handler = new Handler();
+    private static TextView tvOrderMsg;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selected_dishes);
 
+        tvOrderMsg = (TextView) findViewById(R.id.tv_order_msg_selectedlist);
+
         actionBar = getSupportActionBar();
+        girl = QRRestaurantApplication.getGirl();
+
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    tvOrderMsg.setVisibility(View.GONE);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        };
+
+
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -41,12 +62,13 @@ public class SelectedDishesActivity extends ActionBarActivity {
 
         // 添加返回箭头
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(getResources().getString(R.string.title_activity_selected_dishes) + ":" + RestaurantWaitressGirl.getSelectedDishList().size());}
+        actionBar.setTitle(getResources().getString(R.string.title_activity_selected_dishes) + ":" + girl.getSelectedDishList().size());
+    }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.selected_dishes, menu);
         return true;
@@ -96,12 +118,12 @@ public class SelectedDishesActivity extends ActionBarActivity {
         private List<Dish> selectedDishes;
 
         public PlaceholderFragment() {
-            selectedDishes = RestaurantWaitressGirl.getSelectedDishList();
+            selectedDishes = girl.getSelectedDishList();
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_selected_dishes, container, false);
             lvSelectedDishes = (ListView) rootView.findViewById(R.id.lv_selected_dishes);
             tvSelectedCount = (TextView) rootView.findViewById(R.id.tv_item_seleted_count);
@@ -109,9 +131,11 @@ public class SelectedDishesActivity extends ActionBarActivity {
             btnContinueAdd = (Button) rootView.findViewById(R.id.btn_continue_add);
             btnSubmmitSelected = (Button) rootView.findViewById(R.id.btn_selected_submit);
 
-            DishesSelectedAdapter seletedAdapter = new DishesSelectedAdapter(getActivity(), R.id.lv_selected_dishes, selectedDishes);
+            DishesSelectedAdapter seletedAdapter = new DishesSelectedAdapter(getActivity(), R.id.lv_selected_dishes, girl);
 
             lvSelectedDishes.setAdapter(seletedAdapter);
+
+            girl.wsMsgHandler.setInSelectedList(tvOrderMsg, handler, runnable, seletedAdapter);
 
             return rootView;
         }
