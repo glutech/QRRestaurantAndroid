@@ -72,7 +72,7 @@ public class QRRMainActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
                 Intent userInfoIntent = new Intent();
-                userInfoIntent.setClass(QRRMainActivity.this, UserInfoActivity.class);
+                userInfoIntent.setClass(QRRMainActivity.this, PersonalCenterActivity.class);
                 startActivity(userInfoIntent);
             }
         });

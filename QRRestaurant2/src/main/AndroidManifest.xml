@@ -245,8 +245,8 @@
                 android:value="cn.com.zdez.qrrestaurant.QRRMainActivity" />
         </activity>
         <activity
-            android:name="cn.com.zdez.qrrestaurant.UserInfoActivity"
-            android:label="@string/title_activity_user_info" >
+            android:name="cn.com.zdez.qrrestaurant.PersonalCenterActivity"
+            android:label="@string/title_activity_personal_center" >
         </activity>
     </application>
 
