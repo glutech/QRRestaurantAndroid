@@ -12,14 +12,14 @@
         android:text="提示消息"
         android:padding="5sp"
         android:visibility="gone" />
+
     <TextView
         android:id="@+id/tv_onloading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="正在加载..."
         android:padding="5sp"
-        android:gravity="center_horizontal"
-        />
+        android:gravity="center_horizontal" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
@@ -30,8 +30,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        >
+        android:layout_gravity="bottom">
+
         <TextView
             android:id="@+id/tv_order_message"
             android:layout_width="wrap_content"
@@ -42,6 +42,7 @@
             android:text="谁谁谁点了/删除了某某菜"
             android:background="@color/blue_t"
             android:layout_height="@dimen/bottom_message_hight" />
+
         <Button
             android:id="@id/btn_selected_counter"
             android:layout_height="@dimen/bottom_message_hight"
@@ -51,10 +52,7 @@
             android:background="@drawable/btn_bg_green"
             android:text="请选择" />
 
-        </RelativeLayout>
-
-
-
+    </RelativeLayout>
 
 
 </FrameLayout>

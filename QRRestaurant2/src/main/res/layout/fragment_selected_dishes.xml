@@ -16,70 +16,104 @@
             <ListView
                 android:id="@+id/lv_selected_dishes"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></ListView>
+                android:layout_height="wrap_content"></ListView>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/tv_selected_total_price"
+                android:padding="10dp"
+                android:textColor="@color/red"
+                android:layout_gravity="right"
+                android:text="haha" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="150dp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_order_msg_selectedlist"
-            android:gravity="center"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/ios7_blue_t"
-            android:text="提示消息"
-            android:textColor="@color/encode_view"
-            android:visibility="gone"
-            />
-
-        <RelativeLayout
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
+            android:orientation="vertical"
             android:layout_gravity="bottom"
-            android:gravity="center_vertical"
-            android:background="@drawable/bg_bar_t"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <Button
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/btn_continue_add"
-                android:textColor="@color/ios7_blue"
-                android:text="继续添加"
-                android:layout_alignParentLeft="true" />
+                android:layout_gravity="bottom">
 
-            <TextView
-                android:id="@+id/label_price"
-                android:textSize="@dimen/abc_action_bar_subtitle_text_size"
-                android:layout_marginLeft="50dp"
-                android:text="总价:"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/btn_continue_add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tv_order_msg_selectedlist"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:padding="10sp"
+                    android:visibility="gone"
+                    android:layout_toLeftOf="@+id/tv_selected_list_total"
+                    android:text="谁谁谁点了/删除了某某菜"
+                    android:background="@color/blue_t"
+                    android:layout_height="@dimen/bottom_message_hight" />
 
-            <TextView
-                android:id="@+id/tv_selected_total_price"
-                android:text="￥420"
-                android:layout_toRightOf="@id/label_price"
-                android:layout_marginRight="40dp"
-                android:layout_centerVertical="true"
-                android:textColor="@color/red"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@id/tv_selected_list_total"
+                    android:layout_height="@dimen/bottom_message_hight"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="10dp"
+                    android:clickable="false"
+                    android:background="@drawable/btn_bg_green"
+                    android:text="请选择" />
 
-            <Button
-                android:layout_alignParentRight="true"
-                android:id="@+id/btn_selected_submit"
-                android:textColor="@color/ios7_blue"
-                android:text="点完开吃"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </RelativeLayout>
+            </RelativeLayout>
+
+            <!--<RelativeLayout-->
+            <!--android:paddingLeft="5dp"-->
+            <!--android:paddingRight="5dp"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:background="@drawable/bg_bar_t"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content">-->
+
+            <!--<Button-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/btn_continue_add"-->
+            <!--android:textColor="@color/ios7_blue"-->
+            <!--android:text="继续添加"-->
+            <!--android:layout_alignParentLeft="true" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/label_price"-->
+            <!--android:textSize="@dimen/abc_action_bar_subtitle_text_size"-->
+            <!--android:layout_marginLeft="50dp"-->
+            <!--android:text="总价:"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_toRightOf="@id/btn_continue_add"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/tv_selected_total_price"-->
+            <!--android:text="￥420"-->
+            <!--android:layout_toRightOf="@id/label_price"-->
+            <!--android:layout_marginRight="40dp"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:textColor="@color/red"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
+
+            <!--<Button-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:id="@+id/btn_selected_submit"-->
+            <!--android:textColor="@color/ios7_blue"-->
+            <!--android:text="点完开吃"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
+            <!--</RelativeLayout>-->
+
+        </LinearLayout>
+
 
     </FrameLayout>
 

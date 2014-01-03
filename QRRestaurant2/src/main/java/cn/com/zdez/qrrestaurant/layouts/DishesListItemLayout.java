@@ -45,10 +45,14 @@ public class DishesListItemLayout extends RelativeLayout {
             MyLog.d(TAG, dish.getDish_name() + " got selection:" + RestaurantWaitressGirl.isSelected(dish.getDish_id()));
             setBackgroundColor(getResources().getColor(R.color.blue_light_t));
         }
+        tvPrice.setText("￥" + dish.getDish_price());
+        int c = dish.getDish_recommend();
+        MyLog.d(TAG, "--------------fuck this:" + c);
+        tvRecommend.setText(String.valueOf(c));
     }
 
     private void findView(final long did) {
-        tvTitle = (TextView) findViewById(R.id.tv_dish_title);
+        tvTitle = (TextView) findViewById(R.id.tv_dish_list_item_title);
         imgCover = (SmartImageView) findViewById(R.id.img_dish_cover);
         imgCover.setOnClickListener(new OnClickListener() {
             @Override
@@ -59,6 +63,8 @@ public class DishesListItemLayout extends RelativeLayout {
                 context.startActivity(toDishDetail);
             }
         });
+        tvPrice = (TextView) findViewById(R.id.tv_dish_price);
+        tvRecommend = (TextView) findViewById(R.id.tv_dish_list_item_recommend);
     }
 
 }

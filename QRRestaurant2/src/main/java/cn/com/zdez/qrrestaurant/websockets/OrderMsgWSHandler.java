@@ -29,7 +29,6 @@ public class OrderMsgWSHandler extends WebSocketHandler {
     private Handler handlerInSelectedList;
     private Runnable runnableInSelectedList;
     private TextView tvOMSGInSelectedList;
-    private TextView tvSelectCountInSelectedList;
     private Runnable reloadSelectedList;
 
     public OrderMsgWSHandler(RestaurantWaitressGirl girl, Button btnSelectedCounter, TextView tvOrderMessage, Handler handler, Runnable runnable, int time) {

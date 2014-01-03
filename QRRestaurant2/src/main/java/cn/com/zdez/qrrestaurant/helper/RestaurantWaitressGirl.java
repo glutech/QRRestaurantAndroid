@@ -35,6 +35,7 @@ public class RestaurantWaitressGirl {
     // 协同点菜过程的ws 连接
     public WebSocketConnection wsConnection;
     public OrderMsgWSHandler wsMsgHandler;
+    private double totalSelectionPrice;
 
     public RestaurantWaitressGirl(DishesVo dishesVo) {
         this.dishesVo = dishesVo;
@@ -119,6 +120,7 @@ public class RestaurantWaitressGirl {
         }
 
         totalSelection++;
+        totalSelectionPrice += dishMap.get(did).getDish_price();
     }
 
     public static boolean isSelected(Long did) {
@@ -140,10 +142,12 @@ public class RestaurantWaitressGirl {
             if(selection.get(did) == 1){
                 selection.remove(did);
                 totalSelection--;
+                totalSelectionPrice -= dishMap.get(did).getDish_price();
                 return 0;
             }else{
                 selection.put(did, selection.get(did) - 1);
                 totalSelection--;
+                totalSelectionPrice -= dishMap.get(did).getDish_price();
                 return selection.get(did);
             }
         }
@@ -154,10 +158,15 @@ public class RestaurantWaitressGirl {
     public void clearAllSelection() {
         selection = new HashMap<Long, Integer>();
         totalSelection = 0;
+        totalSelectionPrice = 0;
     }
 
     public int totalSelection(){
         return totalSelection;
+    }
+
+    public double totalSelectionPrice(){
+        return totalSelectionPrice;
     }
 
     public List<Dish> getSelectedDishList(){

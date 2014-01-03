@@ -526,15 +526,17 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     private static void fireUpCollaborationOrder() {
         // 在加载列表之前先连接 WS 服务
         WSConnectionClient client = WSConnectionClient.getInstance();
+        MyLog.d(TAG, client.connection.toString());
 
         OrderMsgWSHandler omwsh = new OrderMsgWSHandler(girl, btnSelectedCounter, tvOrderMessage, handler, runnable, TIME);
+        MyLog.d(TAG, omwsh.toString());
         girl.wsMsgHandler = omwsh;
 
+        String tidStr = String.valueOf(mTableId);
+        String uidStr = String.valueOf(QRRestaurantApplication.accountManager.mUserId);
+        MyLog.d(TAG, "WS generation with tid,uid:" + tidStr + " " + uidStr);
         // TODO: Very Very tricky
-        girl.wsConnection = client.connect(Constants.ORDERING_MODULE_WS_URL,
-                String.valueOf(mTableId),
-                String.valueOf(QRRestaurantApplication.accountManager.mUserId),
-                omwsh);
+        girl.wsConnection = client.connect(tidStr, uidStr, omwsh);
 
     }
 
@@ -632,7 +634,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     protected void onResume() {
         super.onResume();
         MyLog.d(TAG, "Just on Resume.........................");
-        if(girl != null && girl.wsMsgHandler != null){
+        if (girl != null && girl.wsMsgHandler != null) {
             girl.wsMsgHandler.isInSelectedListActivity = false;
             btnSelectedCounter.setText("已点：" + girl.totalSelection());
         }

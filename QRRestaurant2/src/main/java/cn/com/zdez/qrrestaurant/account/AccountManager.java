@@ -6,16 +6,14 @@ package cn.com.zdez.qrrestaurant.account;
  */
 public class AccountManager {
     //
-    private String mAccessTocken = "";
-    public String mUserName = "";
-    public long mUserId;
+    private static String mAccessTocken = "";
+    public static String mUserName = "";
+    public static long mUserId;
 
     public AccountManager(String mAccessTocken, String mUserName, long mUserId){
         this.mAccessTocken = mAccessTocken;
         this.mUserName = mUserName;
         this.mUserId = mUserId;
     }
-
-
 
 }

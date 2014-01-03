@@ -60,7 +60,7 @@ public class SelectedDishesActivity extends ActionBarActivity {
 
         // 添加返回箭头
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(getResources().getString(R.string.title_activity_selected_dishes) + ":" + girl.getSelectedDishList().size());
+        actionBar.setTitle(getResources().getString(R.string.title_activity_selected_dishes));
     }
 
 
@@ -109,10 +109,10 @@ public class SelectedDishesActivity extends ActionBarActivity {
     public static class PlaceholderFragment extends Fragment {
 
         private ListView lvSelectedDishes;
-        private TextView tvSelectedCount;
-        private TextView tvTotalPrivce;
-        private Button btnSubmmitSelected;
-        private Button btnContinueAdd;
+        //        private TextView tvSelectedCount;
+        private TextView tvTotalPrice;
+        //        private Button btnSubmmitSelected;
+        private TextView tvTotalSelect;
         private List<Dish> selectedDishes;
 
 
@@ -125,14 +125,16 @@ public class SelectedDishesActivity extends ActionBarActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_selected_dishes, container, false);
             lvSelectedDishes = (ListView) rootView.findViewById(R.id.lv_selected_dishes);
-            tvSelectedCount = (TextView) rootView.findViewById(R.id.tv_item_seleted_count);
-            tvTotalPrivce = (TextView) rootView.findViewById(R.id.tv_selected_total_price);
-            btnContinueAdd = (Button) rootView.findViewById(R.id.btn_continue_add);
-            btnSubmmitSelected = (Button) rootView.findViewById(R.id.btn_selected_submit);
+//            tvSelectedCount = (TextView) rootView.findViewById(R.id.tv_item_seleted_count);
+            tvTotalPrice = (TextView) rootView.findViewById(R.id.tv_selected_total_price);
+//            btnSubmmitSelected = (Button) rootView.findViewById(R.id.btn_selected_submit);
+            tvTotalSelect = (TextView) rootView.findViewById(R.id.tv_selected_list_total);
 
             tvOrderMsg = (TextView) rootView.findViewById(R.id.tv_order_msg_selectedlist);
 
             final DishesSelectedAdapter seletedAdapter = new DishesSelectedAdapter(getActivity(), R.id.lv_selected_dishes, selectedDishes, girl);
+            tvTotalSelect.setText("已选择" + girl.totalSelection());
+            tvTotalPrice.setText("总价：￥" + (girl.totalSelectionPrice() > 0 ? girl.totalSelectionPrice() : 0));
 
             lvSelectedDishes.setAdapter(seletedAdapter);
 
@@ -142,7 +144,8 @@ public class SelectedDishesActivity extends ActionBarActivity {
                     selectedDishes.clear();
                     selectedDishes.addAll(girl.getSelectedDishList());
                     seletedAdapter.notifyDataSetChanged();
-
+                    tvTotalSelect.setText("已选择" + girl.totalSelection());
+                    tvTotalPrice.setText("总价：￥" + (girl.totalSelectionPrice() > 0 ? girl.totalSelectionPrice() : 0));
                 }
             };
 

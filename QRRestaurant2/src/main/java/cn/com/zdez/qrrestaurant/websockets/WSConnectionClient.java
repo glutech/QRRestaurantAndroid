@@ -27,8 +27,8 @@ public class WSConnectionClient {
     }
 
 
-    public WebSocketConnection connect(String relativeUrl, String tid, String uid, WebSocketHandler wsHandler) {
-        String absUrlWithParams = Constants.WEBSOCKET_BASE_URL + relativeUrl + "?tid=" + tid + "&uid=" + uid;
+    public WebSocketConnection connect(String tid, String uid, WebSocketHandler wsHandler) {
+        String absUrlWithParams = Constants.WEBSOCKET_BASE_URL + Constants.ORDERING_MODULE_WS_URL + "?tid=" + tid + "&uid=" + uid;
 
         MyLog.d(TAG, "Generated URL: " + absUrlWithParams);
         try {
