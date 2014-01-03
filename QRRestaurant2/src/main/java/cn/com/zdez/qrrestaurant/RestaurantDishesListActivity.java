@@ -525,7 +525,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
      */
     private static void fireUpCollaborationOrder() {
         // 在加载列表之前先连接 WS 服务
-        WSConnectionClient client = new WSConnectionClient();
+        WSConnectionClient client = WSConnectionClient.getInstance();
 
         OrderMsgWSHandler omwsh = new OrderMsgWSHandler(girl, btnSelectedCounter, tvOrderMessage, handler, runnable, TIME);
         girl.wsMsgHandler = omwsh;

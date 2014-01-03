@@ -30,7 +30,7 @@ public class OrderMsgWSHandler extends WebSocketHandler {
     private Runnable runnableInSelectedList;
     private TextView tvOMSGInSelectedList;
     private TextView tvSelectCountInSelectedList;
-    private DishesSelectedAdapter adapter;
+    private Runnable reloadSelectedList;
 
     public OrderMsgWSHandler(RestaurantWaitressGirl girl, Button btnSelectedCounter, TextView tvOrderMessage, Handler handler, Runnable runnable, int time) {
         super();
@@ -126,7 +126,7 @@ public class OrderMsgWSHandler extends WebSocketHandler {
             tvOMSGInSelectedList.setText(msg);
             tvOMSGInSelectedList.setVisibility(View.VISIBLE);
             handlerInSelectedList.postDelayed(runnableInSelectedList, TIME);
-            adapter.notifyDataSetChanged();
+            handlerInSelectedList.post(this.reloadSelectedList);
         }else{
             tvOrderMessage.setText(msg);
             tvOrderMessage.setVisibility(View.VISIBLE);
@@ -143,7 +143,7 @@ public class OrderMsgWSHandler extends WebSocketHandler {
      */
     private void refreshView(){
         if(isInSelectedListActivity){
-            adapter.notifyDataSetChanged();
+            handlerInSelectedList.post(this.reloadSelectedList);
         }else{
             btnSelector.setText("已点：" + girl.totalSelection());
             RestaurantDishesListActivity.valideTheCurrentListView();
@@ -151,12 +151,12 @@ public class OrderMsgWSHandler extends WebSocketHandler {
 
     }
 
-    public void setInSelectedList(TextView tv, Handler handler, Runnable runnable, DishesSelectedAdapter adapter){
+    public void setInSelectedList(TextView tv, Handler handler, Runnable runnable, Runnable reloadList){
         isInSelectedListActivity = true;
         this.tvOMSGInSelectedList = tv;
         this.handlerInSelectedList = handler;
         this.runnableInSelectedList = runnable;
-        this.adapter = adapter;
+        this.reloadSelectedList = reloadList;
     }
 
     @Override

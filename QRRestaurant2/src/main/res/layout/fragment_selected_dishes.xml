@@ -18,11 +18,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"></ListView>
 
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="150dp" />
-
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_order_msg_selectedlist"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/ios7_blue_t"
+            android:text="提示消息"
+            android:textColor="@color/encode_view"
+            android:visibility="gone"
+            />
 
         <RelativeLayout
             android:paddingLeft="5dp"

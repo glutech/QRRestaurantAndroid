@@ -12,10 +12,18 @@ import de.tavendo.autobahn.WebSocketHandler;
 public class WSConnectionClient {
 
     private static String TAG = WSConnectionClient.class.getSimpleName();
-    public WebSocketConnection connection;
+    public static WSConnectionClient instance;
+    public static WebSocketConnection connection;
 
-    public WSConnectionClient() {
+    private WSConnectionClient() {
         connection = new WebSocketConnection();
+    }
+
+    public static WSConnectionClient getInstance(){
+        if(null == instance){
+            instance = new WSConnectionClient();
+        }
+        return  instance;
     }
 
 
@@ -30,6 +38,6 @@ public class WSConnectionClient {
             MyLog.e(TAG, "Got wrong at connect to ws server...");
         }
 
-        return this.connection;
+        return connection;
     }
 }

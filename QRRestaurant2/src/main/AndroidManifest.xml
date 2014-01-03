@@ -58,9 +58,6 @@
             android:name="cn.com.zdez.qrrestaurant.RestaurantDishesListActivity"
             android:label="@string/title_activity_restaurant_plate_list" />
         <activity
-            android:name="cn.com.zdez.qrrestaurant.DishesSelectedListActivity"
-            android:label="@string/title_activity_plates_selected_list" />
-        <activity
             android:name="com.google.zxing.client.android.PreferencesActivity"
             android:label="@string/preferences_name"
             android:stateNotNeeded="true" />

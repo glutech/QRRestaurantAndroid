@@ -30,13 +30,12 @@ public class SelectedDishesActivity extends ActionBarActivity {
     private static Runnable runnable;
     public static Handler handler = new Handler();
     private static TextView tvOrderMsg;
+    private static Runnable reloadTheList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selected_dishes);
-
-        tvOrderMsg = (TextView) findViewById(R.id.tv_order_msg_selectedlist);
 
         actionBar = getSupportActionBar();
         girl = QRRestaurantApplication.getGirl();
@@ -44,14 +43,13 @@ public class SelectedDishesActivity extends ActionBarActivity {
         runnable = new Runnable() {
             @Override
             public void run() {
-                try{
+                try {
                     tvOrderMsg.setVisibility(View.GONE);
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         };
-
 
 
         if (savedInstanceState == null) {
@@ -117,6 +115,7 @@ public class SelectedDishesActivity extends ActionBarActivity {
         private Button btnContinueAdd;
         private List<Dish> selectedDishes;
 
+
         public PlaceholderFragment() {
             selectedDishes = girl.getSelectedDishList();
         }
@@ -131,11 +130,23 @@ public class SelectedDishesActivity extends ActionBarActivity {
             btnContinueAdd = (Button) rootView.findViewById(R.id.btn_continue_add);
             btnSubmmitSelected = (Button) rootView.findViewById(R.id.btn_selected_submit);
 
-            DishesSelectedAdapter seletedAdapter = new DishesSelectedAdapter(getActivity(), R.id.lv_selected_dishes, girl);
+            tvOrderMsg = (TextView) rootView.findViewById(R.id.tv_order_msg_selectedlist);
+
+            final DishesSelectedAdapter seletedAdapter = new DishesSelectedAdapter(getActivity(), R.id.lv_selected_dishes, selectedDishes, girl);
 
             lvSelectedDishes.setAdapter(seletedAdapter);
 
-            girl.wsMsgHandler.setInSelectedList(tvOrderMsg, handler, runnable, seletedAdapter);
+            reloadTheList = new Runnable() {
+                @Override
+                public void run() {
+                    selectedDishes.clear();
+                    selectedDishes.addAll(girl.getSelectedDishList());
+                    seletedAdapter.notifyDataSetChanged();
+
+                }
+            };
+
+            girl.wsMsgHandler.setInSelectedList(tvOrderMsg, handler, runnable, reloadTheList);
 
             return rootView;
         }

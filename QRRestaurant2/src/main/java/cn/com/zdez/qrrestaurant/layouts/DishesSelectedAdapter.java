@@ -19,12 +19,15 @@ public class DishesSelectedAdapter extends ArrayAdapter<Dish> {
     private static String TAG = DishesSelectedAdapter.class.getSimpleName();
     private Context context;
     private RestaurantWaitressGirl girl;
+    private int resource;
 
-    public DishesSelectedAdapter(Context context, int resource, RestaurantWaitressGirl girl) {
-        super(context, resource, girl.getSelectedDishList());
+    public DishesSelectedAdapter(Context context, int resource, List<Dish> selectedList, RestaurantWaitressGirl girl) {
+        super(context, resource, selectedList);
         this.context = context;
         this.girl = girl;
+        this.resource = resource;
     }
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
