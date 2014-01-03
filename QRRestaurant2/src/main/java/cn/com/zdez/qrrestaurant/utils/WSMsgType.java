@@ -9,6 +9,7 @@ public enum WSMsgType {
     JOIN,
     LEAVE,
     SYNC_DATA,
+    SUBMIT_RESULT,
     NOTSURE;
 
     public static WSMsgType toMsgType(String msgHead){

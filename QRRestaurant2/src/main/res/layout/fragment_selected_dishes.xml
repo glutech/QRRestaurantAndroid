@@ -54,15 +54,25 @@
                     android:background="@color/blue_t"
                     android:layout_height="@dimen/bottom_message_hight" />
 
-                <TextView
+                <Button
+                    android:layout_width="wrap_content"
                     android:id="@id/tv_selected_list_total"
+                    android:layout_height="@dimen/bottom_message_hight"
+                    android:layout_toLeftOf="@+id/btn_selected_list_submit"
+                    android:padding="10dp"
+                    android:clickable="false"
+                    android:background="@drawable/btn_bg_blue"
+                    android:text="请选择"
+                    />
+                <Button
+                    android:id="@id/btn_selected_list_submit"
                     android:layout_height="@dimen/bottom_message_hight"
                     android:layout_width="wrap_content"
                     android:layout_alignParentRight="true"
                     android:padding="10dp"
-                    android:clickable="false"
+                    android:clickable="true"
                     android:background="@drawable/btn_bg_green"
-                    android:text="请选择" />
+                    android:text="提交" />
 
             </RelativeLayout>
 

@@ -111,7 +111,7 @@ public class SelectedDishesActivity extends ActionBarActivity {
         private ListView lvSelectedDishes;
         //        private TextView tvSelectedCount;
         private TextView tvTotalPrice;
-        //        private Button btnSubmmitSelected;
+        private Button btnSubmmitSelected;
         private TextView tvTotalSelect;
         private List<Dish> selectedDishes;
 
@@ -127,7 +127,7 @@ public class SelectedDishesActivity extends ActionBarActivity {
             lvSelectedDishes = (ListView) rootView.findViewById(R.id.lv_selected_dishes);
 //            tvSelectedCount = (TextView) rootView.findViewById(R.id.tv_item_seleted_count);
             tvTotalPrice = (TextView) rootView.findViewById(R.id.tv_selected_total_price);
-//            btnSubmmitSelected = (Button) rootView.findViewById(R.id.btn_selected_submit);
+            btnSubmmitSelected = (Button) rootView.findViewById(R.id.btn_selected_list_submit);
             tvTotalSelect = (TextView) rootView.findViewById(R.id.tv_selected_list_total);
 
             tvOrderMsg = (TextView) rootView.findViewById(R.id.tv_order_msg_selectedlist);
@@ -150,6 +150,14 @@ public class SelectedDishesActivity extends ActionBarActivity {
             };
 
             girl.wsMsgHandler.setInSelectedList(tvOrderMsg, handler, runnable, reloadTheList);
+
+            btnSubmmitSelected.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String submitMsg = "SUBMIT " + QRRestaurantApplication.accountManager.mUserId;
+                    girl.wsConnection.sendTextMessage(submitMsg);
+                }
+            });
 
             return rootView;
         }

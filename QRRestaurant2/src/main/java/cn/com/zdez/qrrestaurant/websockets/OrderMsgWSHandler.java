@@ -6,11 +6,17 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
+import java.util.Iterator;
+import java.util.Map;
+
 import cn.com.zdez.qrrestaurant.RestaurantDishesListActivity;
 import cn.com.zdez.qrrestaurant.helper.RestaurantWaitressGirl;
 import cn.com.zdez.qrrestaurant.layouts.DishesSelectedAdapter;
 import cn.com.zdez.qrrestaurant.utils.MyLog;
 import cn.com.zdez.qrrestaurant.utils.WSMsgType;
+import cn.com.zdez.qrrestaurant.vo.DishesMapBuilderForGson;
 import de.tavendo.autobahn.WebSocketHandler;
 
 /**
@@ -109,6 +115,12 @@ public class OrderMsgWSHandler extends WebSocketHandler {
                 MyLog.d(TAG, "Got a data sync, add " + msgBody + " by " + msgBy);
                 refreshView();
                 break;
+            case SUBMIT_RESULT:
+                String resultBody = msgs[1];
+                Gson gson = new Gson();
+                Map<Long, Integer> dishesOrderMap = gson.fromJson(resultBody, DishesMapBuilderForGson.class).getMap();
+                showTheSubmitResultDialog(dishesOrderMap);
+                break;
             case NOTSURE:
                 // 没有定义的消息类型
                 MyLog.d("WS点菜模块", "其他消息： " + payload);
@@ -134,6 +146,16 @@ public class OrderMsgWSHandler extends WebSocketHandler {
             RestaurantDishesListActivity.valideTheCurrentListView();
         }
 
+    }
+
+    private void showTheSubmitResultDialog(Map<Long, Integer> dishesOrderMap){
+        Iterator it = dishesOrderMap.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry<Long, Integer> en = (Map.Entry<Long, Integer>) it.next();
+            long did = en.getKey();
+            int count = en.getValue();
+            MyLog.d(TAG, "The result order of the submit: did=" + did + " by count=" + count);
+        }
     }
 
 
