@@ -224,7 +224,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                     }
 
                     // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
-                    girl = new RestaurantWaitressGirl(dishesVo);
+                    girl = RestaurantWaitressGirl.getInstance(dishesVo, mTableId);
 
                     tvLoadInfo.setVisibility(View.GONE);
                     mToggleIndeterminate = !mToggleIndeterminate;
@@ -259,14 +259,12 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                 mRestaurantId = Long.parseLong(dishesVo.getRest_id());
 
                 // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
-                girl = RestaurantWaitressGirl.getInstance(dishesVo);
 
-//                        try {
-//                            MyLog.d(TAG, "-------------This is huge--------------------");
-//                            Thread.sleep(5000);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
+                // 初始化 girl
+                //*****************************************************************
+                girl = RestaurantWaitressGirl.getInstance(dishesVo, mTableId); //**
+                //*****************************************************************
+
 
                 mToggleIndeterminate = !mToggleIndeterminate;
                 setSupportProgressBarIndeterminateVisibility(mToggleIndeterminate);
@@ -627,6 +625,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         MyLog.d(TAG, "Just on Destroy......................");
         girl.wsConnection.disconnect();
         girl.clearAllSelection();
+        girl = null;
         girl.wsConnection = null;
     }
 

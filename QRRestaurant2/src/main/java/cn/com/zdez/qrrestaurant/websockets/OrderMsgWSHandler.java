@@ -36,6 +36,7 @@ public class OrderMsgWSHandler extends WebSocketHandler {
     private Runnable runnableInSelectedList;
     private TextView tvOMSGInSelectedList;
     private Runnable reloadSelectedList;
+    private Runnable showConfirmDialog;
 
     public OrderMsgWSHandler(RestaurantWaitressGirl girl, Button btnSelectedCounter, TextView tvOrderMessage, Handler handler, Runnable runnable, int time) {
         super();
@@ -130,15 +131,16 @@ public class OrderMsgWSHandler extends WebSocketHandler {
 
     /**
      * 统一地向用户界面显示提示消息，在里面区分在菜品列表界面还是已选界面
+     *
      * @param msg
      */
-    private void showMsg(String msg){
-        if(isInSelectedListActivity){
+    private void showMsg(String msg) {
+        if (isInSelectedListActivity) {
             tvOMSGInSelectedList.setText(msg);
             tvOMSGInSelectedList.setVisibility(View.VISIBLE);
             handlerInSelectedList.postDelayed(runnableInSelectedList, TIME);
             handlerInSelectedList.post(this.reloadSelectedList);
-        }else{
+        } else {
             tvOrderMessage.setText(msg);
             tvOrderMessage.setVisibility(View.VISIBLE);
             handler.postDelayed(runnable, TIME);
@@ -148,36 +150,44 @@ public class OrderMsgWSHandler extends WebSocketHandler {
 
     }
 
-    private void showTheSubmitResultDialog(Map<Long, Integer> dishesOrderMap){
-        Iterator it = dishesOrderMap.entrySet().iterator();
-        while(it.hasNext()){
-            Map.Entry<Long, Integer> en = (Map.Entry<Long, Integer>) it.next();
-            long did = en.getKey();
-            int count = en.getValue();
-            MyLog.d(TAG, "The result order of the submit: did=" + did + " by count=" + count);
-        }
+    /**
+     * 显示初次提交后从服务器返回的点菜数据，对比本地选择的和服务器上的
+     * 主要用于让用户确认是否是自己所选择的
+     * @param dishesOrderMap
+     */
+    private void showTheSubmitResultDialog(Map<Long, Integer> dishesOrderMap) {
+        girl.setSubmitResultDishesList(dishesOrderMap);
+//        Iterator it = dishesOrderMap.entrySet().iterator();
+//        while (it.hasNext()) {
+//            Map.Entry<Long, Integer> en = (Map.Entry<Long, Integer>) it.next();
+//            long did = en.getKey();
+//            int count = en.getValue();
+//            MyLog.d(TAG, "The result order of the submit: did=" + did + " by count=" + count);
+//        }
+        handlerInSelectedList.post(showConfirmDialog);
     }
 
 
     /**
      * 有新的数据同步过来，只刷新列表，不进行提示
      */
-    private void refreshView(){
-        if(isInSelectedListActivity){
+    private void refreshView() {
+        if (isInSelectedListActivity) {
             handlerInSelectedList.post(this.reloadSelectedList);
-        }else{
+        } else {
             btnSelector.setText("已点：" + girl.totalSelection());
             RestaurantDishesListActivity.valideTheCurrentListView();
         }
 
     }
 
-    public void setInSelectedList(TextView tv, Handler handler, Runnable runnable, Runnable reloadList){
+    public void setInSelectedList(TextView tv, Handler handler, Runnable runnable, Runnable reloadList, Runnable showConfirmDialog) {
         isInSelectedListActivity = true;
         this.tvOMSGInSelectedList = tv;
         this.handlerInSelectedList = handler;
         this.runnableInSelectedList = runnable;
         this.reloadSelectedList = reloadList;
+        this.showConfirmDialog = showConfirmDialog;
     }
 
     @Override

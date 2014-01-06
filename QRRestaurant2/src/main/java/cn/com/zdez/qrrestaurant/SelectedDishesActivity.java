@@ -1,5 +1,6 @@
 package cn.com.zdez.qrrestaurant;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import cn.com.zdez.qrrestaurant.helper.RestaurantWaitressGirl;
 import cn.com.zdez.qrrestaurant.layouts.DishesSelectedAdapter;
+import cn.com.zdez.qrrestaurant.layouts.SubmitResultConfirmDialog;
 import cn.com.zdez.qrrestaurant.model.Dish;
 
 public class SelectedDishesActivity extends ActionBarActivity {
@@ -30,7 +32,8 @@ public class SelectedDishesActivity extends ActionBarActivity {
     private static Runnable runnable;
     public static Handler handler = new Handler();
     private static TextView tvOrderMsg;
-    private static Runnable reloadTheList;
+    private static Runnable runReloadTheList;
+    private static Runnable runTheSubmitResultDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +117,7 @@ public class SelectedDishesActivity extends ActionBarActivity {
         private Button btnSubmmitSelected;
         private TextView tvTotalSelect;
         private List<Dish> selectedDishes;
+        private Dialog resultConfirmDialog;
 
 
         public PlaceholderFragment() {
@@ -132,13 +136,17 @@ public class SelectedDishesActivity extends ActionBarActivity {
 
             tvOrderMsg = (TextView) rootView.findViewById(R.id.tv_order_msg_selectedlist);
 
+
             final DishesSelectedAdapter seletedAdapter = new DishesSelectedAdapter(getActivity(), R.id.lv_selected_dishes, selectedDishes, girl);
             tvTotalSelect.setText("已选择" + girl.totalSelection());
             tvTotalPrice.setText("总价：￥" + (girl.totalSelectionPrice() > 0 ? girl.totalSelectionPrice() : 0));
 
             lvSelectedDishes.setAdapter(seletedAdapter);
 
-            reloadTheList = new Runnable() {
+            /**
+             * 当 ws 消息影响点菜结果的时候需要将结果使用线程更新列表和统计数据
+             */
+            runReloadTheList = new Runnable() {
                 @Override
                 public void run() {
                     selectedDishes.clear();
@@ -149,7 +157,18 @@ public class SelectedDishesActivity extends ActionBarActivity {
                 }
             };
 
-            girl.wsMsgHandler.setInSelectedList(tvOrderMsg, handler, runnable, reloadTheList);
+            /**
+             * 显示提交后服务器返回的结果，等待用户最终确认，这个步骤和显示中服务员手拿确认单的给用户确认相配合
+             */
+            runTheSubmitResultDialog = new Runnable() {
+                @Override
+                public void run() {
+                    resultConfirmDialog = new SubmitResultConfirmDialog(getActivity(), R.style.submitResultDialog, R.layout.submit_result_confirm_dialog_layout);
+                    resultConfirmDialog.show();
+                }
+            };
+
+            girl.wsMsgHandler.setInSelectedList(tvOrderMsg, handler, runnable, runReloadTheList, runTheSubmitResultDialog);
 
             btnSubmmitSelected.setOnClickListener(new View.OnClickListener() {
                 @Override

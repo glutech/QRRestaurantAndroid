@@ -10,6 +10,7 @@ import java.util.Map;
 
 import cn.com.zdez.qrrestaurant.model.Category;
 import cn.com.zdez.qrrestaurant.model.Dish;
+import cn.com.zdez.qrrestaurant.model.Restaurant;
 import cn.com.zdez.qrrestaurant.utils.DishOrderedComparator;
 import cn.com.zdez.qrrestaurant.utils.DishRecommendedComparator;
 import cn.com.zdez.qrrestaurant.vo.DishesVo;
@@ -27,27 +28,37 @@ public class RestaurantWaitressGirl {
     public static Map<Long, Category> catMap = new HashMap<Long, Category>(); // 按照类别 id 存储每一个类别实体
     public String[] categoryNameArray; // dishesVo 中所有的类别名称数组
     public static Map<Long, Dish> dishMap = new HashMap<Long, Dish>(); // 按照 dish id 存储每一个 dish 实体
+    public static long belongRestaurant; // girl 所属餐厅
+    public static long serveTable; // girl 现在服务的餐桌
 
     // 点菜过程中的点选记录
     public static HashMap<Long, Integer> selection = new HashMap<Long, Integer>();
     public static int totalSelection = 0;
+    // 服务器返回的结果存储
+    public static Map<Long, Integer> resultMap;
 
     // 协同点菜过程的ws 连接
     public WebSocketConnection wsConnection;
     public OrderMsgWSHandler wsMsgHandler;
     private double totalSelectionPrice;
 
-    public RestaurantWaitressGirl(DishesVo dishesVo) {
+    private RestaurantWaitressGirl(DishesVo dishesVo, Long tid) {
         this.dishesVo = dishesVo;
+        belongRestaurant = Long.parseLong(dishesVo.getRest_id());
+        serveTable = tid;
         mapingCategory();
         makeCategory(); // 在生成对象的时候处理排序、分类操作
         makeCategoryNameList();
     }
 
-    public static RestaurantWaitressGirl getInstance(DishesVo dishesVo) {
+    public static RestaurantWaitressGirl getInstance(DishesVo dishesVo, Long tid) {
         if (null == instance) {
-            instance = new RestaurantWaitressGirl(dishesVo);
+            instance = new RestaurantWaitressGirl(dishesVo, tid);
         }
+        return instance;
+    }
+
+    public static RestaurantWaitressGirl getInstance() {
         return instance;
     }
 
@@ -113,9 +124,9 @@ public class RestaurantWaitressGirl {
     }
 
     public void addNewSelection(Long did) {
-        if(!selection.containsKey(did)){
+        if (!selection.containsKey(did)) {
             selection.put(did, 1);
-        }else{
+        } else {
             selection.put(did, selection.get(did) + 1);
         }
 
@@ -134,17 +145,18 @@ public class RestaurantWaitressGirl {
 
     /**
      * /**
+     *
      * @param did 菜品 id
      * @return 已选择列表中没有这个菜的话返回-1（错误）,成功减少数目并且现有数目大于0则返回当前个数，成功减少并且为0的话返回0
      */
     public int removeSelection(Long did) {
         if (selection.containsKey(did)) {
-            if(selection.get(did) == 1){
+            if (selection.get(did) == 1) {
                 selection.remove(did);
                 totalSelection--;
                 totalSelectionPrice -= dishMap.get(did).getDish_price();
                 return 0;
-            }else{
+            } else {
                 selection.put(did, selection.get(did) - 1);
                 totalSelection--;
                 totalSelectionPrice -= dishMap.get(did).getDish_price();
@@ -161,23 +173,76 @@ public class RestaurantWaitressGirl {
         totalSelectionPrice = 0;
     }
 
-    public int totalSelection(){
+    public int totalSelection() {
         return totalSelection;
     }
 
-    public double totalSelectionPrice(){
+    public double totalSelectionPrice() {
         return totalSelectionPrice;
     }
 
-    public List<Dish> getSelectedDishList(){
+    public List<Dish> getSelectedDishList() {
         List<Dish> seletedDishList = new ArrayList<Dish>();
 
         Iterator iter2 = selection.entrySet().iterator();
-        while(iter2.hasNext()){
+        while (iter2.hasNext()) {
             Map.Entry<Long, Integer> entry = (Map.Entry<Long, Integer>) iter2.next();
 
             seletedDishList.add(dishMap.get(entry.getKey()));
         }
         return seletedDishList;
     }
+
+    /**
+     * 获取服务器提交后返回的菜单详情
+     *
+     * @return
+     */
+    public List<Dish> getSubmitResultDishList() {
+        if (!isSelectionCorrect(resultMap)) {
+            // TODO: 如果不一样的话要做点什么？？？
+            // TODO: 提醒用户，但依旧使用服务器上的值，或者用户选则重新来一遍或者就依服务器的结果为准
+        }
+        return getSelectedDishList();
+    }
+
+
+    public void setSubmitResultDishesList(Map<Long, Integer> result) {
+        resultMap = new HashMap<Long, Integer>(result);
+    }
+
+    /**
+     * 比较服务器返回的订单结果与本地的是否一致，对比两个 Map
+     *
+     * @param resultMap
+     * @return
+     */
+    private boolean isSelectionCorrect(Map<Long, Integer> resultMap) {
+        if (selection.size() != resultMap.size()) {
+            return false;
+        }
+
+        Map<Long, Integer> clientCopyMap = new HashMap<Long, Integer>(selection);
+
+        Iterator serverSideIt = resultMap.entrySet().iterator();
+
+        while (serverSideIt.hasNext()) {
+            Map.Entry<Long, Integer> en = (Map.Entry<Long, Integer>) serverSideIt.next();
+            if (selection.get(en.getKey()) == null || selection.get(en.getKey()) != en.getValue()) {
+                // 本地 Map 不含服务器含有的这个菜
+                return false;
+            } else {
+                // 这个菜相同
+                clientCopyMap.remove(en);
+            }
+        }
+
+        // 相同的都移除，如果一致的话 copy 中应该为空，否则还是不一样
+        if (clientCopyMap.size() != 0) {
+            return false;
+        }
+
+        return true;
+    }
+
 }

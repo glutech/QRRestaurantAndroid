@@ -28,6 +28,7 @@ public final class Constants {
     public static final String LOGIN_WITH_ACCOUNT_URL = "/user/login_with_account";
     public static final String ORDERING_MODULE_WS_URL = "/wsservlet/WSOrderWSServlet";
     public static final String GETRESTAURANT_LIST_ALL = "/book/get_rest_list";
+    public static final String SUBMIT_ORDER_CONRIM = "/order/submit_order";
 
     public static final String TABLE_TAKE_POST_URL = "/tables/take"; // 废弃
     public static final String SCAN_TO_ORDER = "/order/scan";
