@@ -15,8 +15,10 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import cn.com.zdez.qrrestaurant.http.QRRHTTPClient;
+import cn.com.zdez.qrrestaurant.layouts.DishBriefListAdapter;
 import cn.com.zdez.qrrestaurant.layouts.DishesListAdapter;
 import cn.com.zdez.qrrestaurant.utils.Constants;
+import cn.com.zdez.qrrestaurant.utils.ListViewUtil;
 import cn.com.zdez.qrrestaurant.vo.MenuVo;
 
 public class OrderDetailsActivity extends ActionBarActivity {
@@ -72,8 +74,9 @@ public class OrderDetailsActivity extends ActionBarActivity {
                     tvOrderDate.append(mv.getMenu().getMenu_time().toString());
                     tvRestName.append(String.valueOf(mv.getMenu().getRest_id()));
                     tvOrderStatus.append(String.valueOf(mv.getMenu().getMenu_status()));
-                    DishesListAdapter adapter = new DishesListAdapter(OrderDetailsActivity.this, R.id.lv_dishes_in_order_detail, mv.getDishes());
+                    DishBriefListAdapter adapter = new DishBriefListAdapter(OrderDetailsActivity.this, R.id.lv_dishes_in_order_detail, mv.getDishes());
                     lvOrderDishes.setAdapter(adapter);
+                    ListViewUtil.setListViewHeightBasedOnChildren(lvOrderDishes);
                 }
 
             }

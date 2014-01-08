@@ -41,26 +41,26 @@
             android:layout_below="@id/tv_dish_list_item_title"
             android:layout_toRightOf="@id/tv_dish_price" />
 
-        <TextView
-            android:id="@+id/label_recommend"
-            android:layout_toRightOf="@id/price_label"
-            android:layout_width="wrap_content"
-            android:paddingLeft="5dp"
-            android:paddingTop="5dp"
-            android:text="推荐评分: "
-            android:layout_below="@id/tv_dish_list_item_title"
-            android:layout_height="wrap_content" />
+        <!--<TextView-->
+            <!--android:id="@+id/label_recommend"-->
+            <!--android:layout_toRightOf="@id/price_label"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:paddingLeft="5dp"-->
+            <!--android:paddingTop="5dp"-->
+            <!--android:text="推荐评分: "-->
+            <!--android:layout_below="@id/tv_dish_list_item_title"-->
+            <!--android:layout_height="wrap_content" />-->
 
 
-        <TextView
-            android:id="@+id/tv_dish_list_item_recommend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:layout_below="@id/tv_dish_list_item_title"
-            android:layout_toRightOf="@id/label_recommend"
-            android:text="420"
-            android:textColor="@color/blue" />
+        <!--<TextView-->
+            <!--android:id="@+id/tv_dish_list_item_recommend"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingTop="5dp"-->
+            <!--android:layout_below="@id/tv_dish_list_item_title"-->
+            <!--android:layout_toRightOf="@id/label_recommend"-->
+            <!--android:text="420"-->
+            <!--android:textColor="@color/blue" />-->
 
         <com.loopj.android.image.SmartImageView
             android:clickable="true"

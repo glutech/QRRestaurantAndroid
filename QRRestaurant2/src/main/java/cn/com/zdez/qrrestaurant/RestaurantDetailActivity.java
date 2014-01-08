@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -83,6 +84,7 @@ public class RestaurantDetailActivity extends ActionBarActivity {
                     Gson gson = new Gson();
 
                     try {
+                        // TODO: 这里取到的数据理应含有餐厅评论，在服务器实现后修改饭序列实体，并在接下来的操作中完成 list 的显示
                         restaurant = gson.fromJson(content, Restaurant.class);
 //                        Thread.sleep(5000);
                     } catch (Exception e) {
@@ -148,6 +150,8 @@ public class RestaurantDetailActivity extends ActionBarActivity {
         private TextView tvRestName;
         private TextView tvLabel;
         private TextView tvAddr;
+        private TextView tvRestDesc;
+        private ListView lvRComments;
         private Button btnStartOrder;
 
         public PlaceholderFragment() {
@@ -161,10 +165,13 @@ public class RestaurantDetailActivity extends ActionBarActivity {
             tvRestName = (TextView) rootView.findViewById(R.id.tv_rest_info_name);
             tvAddr = (TextView) rootView.findViewById(R.id.tv_rest_info_addr);
             tvLabel = (TextView) rootView.findViewById(R.id.tv_rest_info_label);
+            tvRestDesc = (TextView) rootView.findViewById(R.id.tv_rest_info_desc);
+            lvRComments = (ListView) rootView.findViewById(R.id.lv_rest_info_comments);
 
             tvRestName.setText(restaurant.getRest_name());
             tvAddr.setText(restaurant.getRest_addr());
             tvLabel.setText(restaurant.getRest_type());
+            tvRestDesc.setText(restaurant.getRest_desc());
 
             btnStartOrder.setOnClickListener(new View.OnClickListener() {
                 @Override

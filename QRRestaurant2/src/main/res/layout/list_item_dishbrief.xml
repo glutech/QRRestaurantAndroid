@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cn.com.zdez.qrrestaurant.layouts.DishBriefItem xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_dishbrief_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:padding="5dp"
+        android:text="dish name" />
+
+    <TextView
+        android:id="@+id/tv_dishbrief_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:padding="5dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/red"
+        android:text="￥" />
+
+    <TextView
+        android:id="@+id/tv_dishbrief_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/tv_dishbrief_price"
+        android:padding="5dp"
+        android:textColor="@color/blue"
+        android:gravity="center_vertical"
+        android:text="x1" />
+
+</cn.com.zdez.qrrestaurant.layouts.DishBriefItem>

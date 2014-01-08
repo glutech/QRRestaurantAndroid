@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -31,6 +32,7 @@ public class SubmitResultConfirmDialog extends Dialog {
     private Button btnCancel;
     private Button btnConfirm;
     private ListView lvSubmitDishesList;
+    private TextView tvTotalPrice;
     private ProgressBar pbComfirm;
     private RestaurantWaitressGirl girl;
 
@@ -63,9 +65,12 @@ public class SubmitResultConfirmDialog extends Dialog {
         btnConfirm = (Button) findViewById(R.id.btn_confirm_in_result_dialog);
         lvSubmitDishesList = (ListView) findViewById(R.id.lv_submit_in_dialog);
         pbComfirm = (ProgressBar) findViewById(R.id.pb_confirm);
+        tvTotalPrice = (TextView) findViewById(R.id.tv_totalprice_in_dialog);
 
-        DishesSelectedAdapter adapter = new DishesSelectedAdapter(this.context, R.id.lv_submit_in_dialog, girl.getSubmitResultDishList(), girl);
+        DishBriefListAdapter adapter = new DishBriefListAdapter(this.context, R.id.lv_submit_in_dialog, girl.getSubmitResultDishList());
         lvSubmitDishesList.setAdapter(adapter);
+
+        tvTotalPrice.append(String.valueOf(girl.totalSelectionPrice()));
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,11 +95,14 @@ public class SubmitResultConfirmDialog extends Dialog {
                     @Override
                     public void onSuccess(String content) {
                         super.onSuccess(content);
-                        // TODO: 结束转圈并跳转
                         Gson gson = new Gson();
                         MenuVo mv = gson.fromJson(content, MenuVo.class);
                         String m_id = String.valueOf(mv.getMenu().getMenu_id());
                         dismiss();
+
+                        // 将选中的菜品清空，防止返回时还有选择
+                        girl.clearAllSelection();
+
                         Intent orderResultIntent = new Intent();
                         orderResultIntent.setClass(context, OrderDetailsActivity.class);
                         orderResultIntent.putExtra("m_id", m_id);

@@ -15,6 +15,8 @@
     <color name="ios7_blue">#1681FA</color>
     <color name="dark_light">#ff7e7e83</color>
     <color name="white">#EEEEEE</color>
+    <color name="earth">#ff965835</color>
+    <color name="earth_bg">#f7f1d8</color>
 
     <color name="gray">#ff414141</color>
 

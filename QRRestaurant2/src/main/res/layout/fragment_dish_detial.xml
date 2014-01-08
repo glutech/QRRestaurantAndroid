@@ -46,20 +46,28 @@
                             android:id="@+id/tv_dish_detail_name"
                             android:layout_alignParentLeft="true"
                             android:padding="10sp"
-                            android:text="火腿木瓜鸡"
+                            android:text="白菜炒龙虾"
                             android:textSize="18sp" />
 
 
                         <TextView
                             android:id="@+id/tv_dish_detail_price"
                             android:padding="10sp"
-                            android:layout_alignParentRight="true"
+                            android:layout_toRightOf="@id/tv_dish_detail_name"
                             android:layout_centerVertical="true"
                             android:textSize="20sp"
                             android:text="￥42"
                             android:textColor="@color/red"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
+
+                        <Button
+                            android:id="@+id/btn_add_to_selection"
+                            android:layout_alignParentRight="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="添加"
+                            android:textColor="@color/ios7_blue" />
 
                     </RelativeLayout>
 
@@ -79,17 +87,16 @@
                         android:background="@drawable/bg_rec_top_blue_light">
 
                         <ImageView
-                            android:layout_width="wrap_content"
+                            android:layout_width="32dp"
                             android:padding="3dp"
                             android:layout_gravity="center_vertical"
-                            android:src="@drawable/bubbles"
+                            android:src="@drawable/ic_stream"
                             android:layout_height="wrap_content" />
 
                         <TextView
-                            android:id="@+id/tv_dish_detail_desc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="详细描述"
+                            android:text="详细"
                             android:padding="5sp"
                             android:textColor="@color/result_text"
                             android:layout_gravity="center" />
@@ -104,122 +111,147 @@
 
 
                         <TextView
+                            android:id="@+id/tv_dish_detail_desc"
                             android:layout_width="match_parent"
                             android:text="暂时没有介绍"
                             android:padding="10sp"
-
                             android:layout_height="wrap_content" />
 
-                        <TextView
-                            android:id="@+id/tv_dish_detail_cat"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tv_dish_detail_cat"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_centerVertical="true"
+                                android:padding="10sp"
+                                android:textColor="@color/ios7_blue"
+                                android:text="类别:" />
+
+                            <TextView
+                                android:id="@+id/tv_dish_detail_tags"
+                                android:layout_width="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="标签:"
+                                android:padding="10sp"
+                                android:textColor="@color/ios7_blue" />
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/view_open_comments"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:background="@drawable/bg_rec_top_clickable">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:padding="3dp"
+                            android:src="@drawable/bubbles"
+                            android:id="@+id/img_comment_icon"
+                            android:layout_alignParentLeft="true"
                             android:layout_centerVertical="true"
-                            android:padding="10sp"
-                            android:text="菜品:"
-                            />
+                            android:layout_height="wrap_content" />
 
                         <TextView
-                            android:id="@+id/tv_dish_detail_tags"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="标签:"
-                            android:padding="10sp"
-                            android:textColor="@color/ios7_blue"
-                            />
-
-                    </LinearLayout>
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_margin="10dp"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_rec_green_light">
+                            android:layout_toRightOf="@id/img_comment_icon"
+                            android:text="打开评论"
+                            android:padding="5sp"
+                            android:layout_centerVertical="true"
+                            android:textColor="@color/result_text" />
 
                         <ImageView
-                            android:layout_width="wrap_content"
+                            android:id="@+id/img_comments_arrow"
+                            android:layout_alignParentRight="true"
+                            android:src="@drawable/ic_arrow_down"
+                            android:layout_width="32dp"
                             android:padding="3dp"
-                            android:layout_gravity="center_vertical"
-                            android:src="@drawable/bubbles"
+                            android:layout_centerVertical="true"
                             android:layout_height="wrap_content" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="网友评论"
-                            android:padding="5sp"
-                            android:textColor="@color/result_text"
-                            android:layout_gravity="center" />
 
-                    </LinearLayout>
+                    </RelativeLayout>
 
                     <LinearLayout
+                        android:id="@+id/v_dish_detail_comments"
                         android:layout_width="match_parent"
                         android:background="@drawable/bg_white_rect"
+                        android:visibility="gone"
                         android:layout_height="wrap_content">
 
-                        <TextView
+                        <ListView
+                            android:id="@+id/lv_dish_detail_comments"
                             android:layout_width="match_parent"
-                            android:text="暂时没有评论"
-                            android:padding="10sp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"></ListView>
 
                     </LinearLayout>
 
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_margin="10dp"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <!--<LinearLayout-->
+                <!--android:layout_margin="10dp"-->
+                <!--android:orientation="vertical"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content">-->
 
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_rec_top_purple_light">
+                <!--<LinearLayout-->
+                <!--android:orientation="horizontal"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/bg_rec_top_purple_light">-->
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:padding="3dp"
-                            android:layout_gravity="center_vertical"
-                            android:src="@drawable/bubbles"
-                            android:layout_height="wrap_content" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="其他东西"
-                            android:padding="5sp"
-                            android:textColor="@color/result_text"
-                            android:layout_gravity="center" />
+                <!--<ImageView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:padding="3dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:src="@drawable/bubbles"-->
+                <!--android:layout_height="wrap_content" />-->
+                <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="其他东西"-->
+                <!--android:padding="5sp"-->
+                <!--android:textColor="@color/result_text"-->
+                <!--android:layout_gravity="center" />-->
 
-                    </LinearLayout>
+                <!--</LinearLayout>-->
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:background="@drawable/bg_white_rect"
-                        android:layout_height="wrap_content">
+                <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:background="@drawable/bg_white_rect"-->
+                <!--android:layout_height="wrap_content">-->
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:text="暂时没有其他的东西"
-                            android:padding="10sp"
-                            android:layout_height="wrap_content" />
+                <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:text="暂时没有其他的东西"-->
+                <!--android:padding="10sp"-->
+                <!--android:layout_height="wrap_content" />-->
 
-                    </LinearLayout>
+                <!--</LinearLayout>-->
 
 
-                </LinearLayout>
+                <!--</LinearLayout>-->
 
 
                 <TextView

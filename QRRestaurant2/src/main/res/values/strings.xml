@@ -3,11 +3,11 @@
 
     <string name="app_name">二维码点餐</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">设置</string>
+    <string name="action_settings">关于我们</string>
     <string name="menu_title">扫描二维码</string>
     <string name="title_activity_restaurant_chooser">选择餐馆</string>
-    <string name="title_section1">附近餐馆</string>
-    <string name="title_section2">推荐餐馆</string>
+    <string name="title_section1">推荐餐馆</string>
+    <string name="title_section2">附近餐馆</string>
     <string name="title_section3">看过的餐馆</string>
     <string name="pages_default_title1">推荐菜品</string>
     <string name="pages_default_title2">排行</string>

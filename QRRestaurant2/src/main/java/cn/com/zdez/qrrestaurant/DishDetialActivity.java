@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -115,6 +116,10 @@ public class DishDetialActivity extends ActionBarActivity {
         TextView tvDishDesc;
         TextView tvDishTags;
         TextView tvDishCat;
+        View vShowComments;
+        View vComments;
+        ImageView imgCommentsArrow;
+        boolean toggleComments = true;
 
         public PlaceholderFragment() {
         }
@@ -128,6 +133,10 @@ public class DishDetialActivity extends ActionBarActivity {
             tvDishName = (TextView) rootView.findViewById(R.id.tv_dish_detail_name);
             tvDishCat = (TextView) rootView.findViewById(R.id.tv_dish_detail_cat);
             tvDishTags = (TextView) rootView.findViewById(R.id.tv_dish_detail_tags);
+            vShowComments = rootView.findViewById(R.id.view_open_comments);
+            imgCommentsArrow = (ImageView) rootView.findViewById(R.id.img_comments_arrow);
+            vComments = rootView.findViewById(R.id.v_dish_detail_comments);
+
 
             Dish dish = RestaurantWaitressGirl.dishMap.get(mDishID);
             Category cat = RestaurantWaitressGirl.catMap.get(dish.getCat_id());
@@ -137,6 +146,20 @@ public class DishDetialActivity extends ActionBarActivity {
             tvDishTags.append(dish.getDish_tag());
             tvDishPrice.setText("￥" + dish.getDish_price());
             tvDishCat.append(cat.getCat_name());
+
+            vShowComments.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (toggleComments) {
+                        vComments.setVisibility(View.VISIBLE);
+                        imgCommentsArrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_arrow_up));
+                    } else {
+                        vComments.setVisibility(View.GONE);
+                        imgCommentsArrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_arrow_down));
+                    }
+                    toggleComments = !toggleComments;
+                }
+            });
 
             return rootView;
         }
