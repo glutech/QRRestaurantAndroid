@@ -9,14 +9,17 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import cn.com.zdez.qrrestaurant.OrderDetailsActivity;
 import cn.com.zdez.qrrestaurant.PersonalCenterActivity;
 import cn.com.zdez.qrrestaurant.R;
 import cn.com.zdez.qrrestaurant.helper.RestaurantWaitressGirl;
 import cn.com.zdez.qrrestaurant.http.QRRHTTPClient;
 import cn.com.zdez.qrrestaurant.utils.Constants;
+import cn.com.zdez.qrrestaurant.vo.MenuVo;
 
 /**
  * 自定义对话框，显示用户初次提交菜单操作后返回（由 ws 返回，存储在 girl 中）的结果，等待用户进行最终确认
@@ -88,9 +91,13 @@ public class SubmitResultConfirmDialog extends Dialog {
                     public void onSuccess(String content) {
                         super.onSuccess(content);
                         // TODO: 结束转圈并跳转
+                        Gson gson = new Gson();
+                        MenuVo mv = gson.fromJson(content, MenuVo.class);
+                        String m_id = String.valueOf(mv.getMenu().getMenu_id());
                         dismiss();
                         Intent orderResultIntent = new Intent();
-                        orderResultIntent.setClass(context, PersonalCenterActivity.class);
+                        orderResultIntent.setClass(context, OrderDetailsActivity.class);
+                        orderResultIntent.putExtra("m_id", m_id);
                         context.startActivity(orderResultIntent);
                     }
 

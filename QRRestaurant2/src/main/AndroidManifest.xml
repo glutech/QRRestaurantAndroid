@@ -244,6 +244,16 @@
         <activity
             android:name="cn.com.zdez.qrrestaurant.PersonalCenterActivity"
             android:label="@string/title_activity_personal_center" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cn.com.zdez.qrrestaurant.QRRMainActivity" />
+        </activity>
+        <activity
+            android:name="cn.com.zdez.qrrestaurant.OrderDetailsActivity"
+            android:label="@string/title_activity_order_details" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cn.com.zdez.qrrestaurant.PersonalCenterActivity" />
         </activity>
     </application>
 

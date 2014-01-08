@@ -180,8 +180,12 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore the previously serialized current dropdown position.
         if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
-            getSupportActionBar().setSelectedNavigationItem(
-                    savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
+            try{
+                getSupportActionBar().setSelectedNavigationItem(
+                        savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 

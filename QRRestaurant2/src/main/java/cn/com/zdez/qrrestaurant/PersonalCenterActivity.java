@@ -10,17 +10,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.ListView;
+import android.widget.TextView;
 
 public class PersonalCenterActivity extends ActionBarActivity {
+
+    private static String TAG = PersonalCenterActivity.class.getSimpleName();
+
+    private ListView lvHistoryOrderList;
+    private TextView tvTmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_center);
 
+        lvHistoryOrderList = (ListView) findViewById(R.id.lv_orders_in_pcenter);
+        loadData();
 
     }
 
+    private void loadData(){
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -144,5 +144,6 @@
     <string name="msg_alert_server_down">服务连接出错，请稍候再试...</string>
     <string name="title_activity_history_orders">我的订单</string>
     <string name="title_activity_personal_center">个人中心</string>
+    <string name="title_activity_order_details">订单详情</string>
 
 </resources>

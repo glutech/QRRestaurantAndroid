@@ -626,7 +626,6 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         girl.wsConnection.disconnect();
         girl.clearAllSelection();
         girl = null;
-        girl.wsConnection = null;
     }
 
     @Override
