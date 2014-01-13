@@ -63,7 +63,7 @@ public class QRRestaurantApplication extends Application {
     }
 
     /**
-     * 在用户使用device id到服务器登录/注册之后，需要将返回的用户信息存储到程序持久层中，用于之后使用
+     * 在用户使用device id到服务器登录/注册之后，需要将返回的用户信息存储到程序持久层中，之后使用
      *
      * @param c
      * @return
@@ -71,6 +71,14 @@ public class QRRestaurantApplication extends Application {
     public static boolean signinLocalWithDeviceID(Customer c) {
         accountManager = new AccountManager(fakeAccessTocken, c.getCutomer_name(), c.getCustomer_id());
         return QRPreferences.saveUserInToPrefs(mPrefs, c, fakeAccessTocken);
+    }
+
+    /**
+     * 取用户 id
+     * @return
+     */
+    public static long getUserID(){
+        return QRPreferences.getUserID(mPrefs);
     }
 
     /**

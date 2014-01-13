@@ -48,7 +48,7 @@ public class DishesListItemLayout extends RelativeLayout {
         tvPrice.setText("￥" + dish.getDish_price());
         int c = dish.getDish_recommend();
         MyLog.d(TAG, "--------------fuck this:" + c);
-//        tvRecommend.setText(String.valueOf(c));
+        tvRecommend.setText(String.valueOf(c));
     }
 
     private void findView(final long did) {
@@ -64,7 +64,7 @@ public class DishesListItemLayout extends RelativeLayout {
             }
         });
         tvPrice = (TextView) findViewById(R.id.tv_dish_price);
-//        tvRecommend = (TextView) findViewById(R.id.tv_dish_list_item_recommend);
+        tvRecommend = (TextView) findViewById(R.id.tv_dish_list_item_recommend);
     }
 
 

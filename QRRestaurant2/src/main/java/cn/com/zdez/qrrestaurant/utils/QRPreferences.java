@@ -34,15 +34,15 @@ public class QRPreferences {
         }
     }
 
-    public static boolean saveUserInToPrefs(SharedPreferences prefs, Customer c, String accessTocken){
+    public static boolean saveUserInToPrefs(SharedPreferences prefs, Customer c, String accessTocken) {
         Editor editor = prefs.edit();
         PreferencesSpec.setPreference(prefs, editor, P_CURRENT_VERSION_NAME, c.getCutomer_name());
         PreferencesSpec.setPreference(prefs, editor, P_CUSTOMER_ID, String.valueOf(c.getCustomer_id()));
         PreferencesSpec.setPreference(prefs, editor, P_CUSTOMER_PSW, c.getCustomer_pwd());
         PreferencesSpec.setPreference(prefs, editor, P_ISSIGNUP_WITH_DEVICE, true);
-        if(editor.commit()){
+        if (editor.commit()) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -52,13 +52,19 @@ public class QRPreferences {
         String accessTocken = mPrefs.getString(P_ACCESS_TOCKEN, "blank access tocken");
         String userIdStr = mPrefs.getString(P_CUSTOMER_ID, "blank user id");
         long userId = -1;
-        try{
+        try {
             userId = Long.parseLong(userIdStr);
-        }catch (Exception e){
+        } catch (Exception e) {
             MyLog.e(TAG, "Got a user id that can't parse to long...");
             e.printStackTrace();
         }
 
-        return new AccountManager(accessTocken,userName, userId);
+        return new AccountManager(accessTocken, userName, userId);
     }
+
+    public static long getUserID(SharedPreferences mPrefs) {
+        long userID = Long.parseLong(mPrefs.getString(P_CUSTOMER_ID, "-1"));
+        return userID;
+    }
+
 }
