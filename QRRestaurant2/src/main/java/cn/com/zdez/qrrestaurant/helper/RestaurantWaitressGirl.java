@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import cn.com.zdez.qrrestaurant.model.Category;
 import cn.com.zdez.qrrestaurant.model.Dish;
-import cn.com.zdez.qrrestaurant.model.Restaurant;
 import cn.com.zdez.qrrestaurant.utils.DishOrderedComparator;
 import cn.com.zdez.qrrestaurant.utils.DishRecommendedComparator;
 import cn.com.zdez.qrrestaurant.vo.DishesVo;
@@ -23,13 +21,16 @@ import de.tavendo.autobahn.WebSocketConnection;
 public class RestaurantWaitressGirl {
 
     private static DishesVo dishesVo; // 从服务器中取得的数据，需进一步处理
-    public Map<String, List<Dish>> catedDishMap = new HashMap<String, List<Dish>>(); // 按照类别存储每一个类别下的 dishlist
+    public Map<String, List<Dish>> catedDishMap; // 按照类别存储每一个类别下的 dishlist
     public static RestaurantWaitressGirl instance;
-    public static Map<Long, Category> catMap = new HashMap<Long, Category>(); // 按照类别 id 存储每一个类别实体
+    public static Map<Long, Category> catMap; // 按照类别 id 存储每一个类别实体
     public String[] categoryNameArray; // dishesVo 中所有的类别名称数组
-    public static Map<Long, Dish> dishMap = new HashMap<Long, Dish>(); // 按照 dish id 存储每一个 dish 实体
-    public static long belongRestaurant; // girl 所属餐厅
+    public static Map<Long, Dish> dishMap; // 按照 dish id 存储每一个 dish 实体
+    public static long belongRestaurantID; // girl 所属餐厅
     public static long serveTable; // girl 现在服务的餐桌
+
+    // 处理预订和现场点餐的不同操作
+    public static boolean isLiveOrder = false; // 是否是现场点餐
 
     // 点菜过程中的点选记录
     public static HashMap<Long, Integer> selection = new HashMap<Long, Integer>();
@@ -44,8 +45,18 @@ public class RestaurantWaitressGirl {
 
     private RestaurantWaitressGirl(DishesVo dishesVo, Long tid) {
         this.dishesVo = dishesVo;
-        belongRestaurant = Long.parseLong(dishesVo.getRest_id());
+        belongRestaurantID = Long.parseLong(dishesVo.getRest_id());
         serveTable = tid;
+        isLiveOrder = true;
+        mapingCategory();
+        makeCategory(); // 在生成对象的时候处理排序、分类操作
+        makeCategoryNameList();
+    }
+
+    private RestaurantWaitressGirl(DishesVo dishesVo) {
+        this.dishesVo = dishesVo;
+        belongRestaurantID = Long.parseLong(dishesVo.getRest_id());
+        isLiveOrder = false;
         mapingCategory();
         makeCategory(); // 在生成对象的时候处理排序、分类操作
         makeCategoryNameList();
@@ -58,14 +69,27 @@ public class RestaurantWaitressGirl {
         return instance;
     }
 
+    public static RestaurantWaitressGirl getInstance(DishesVo dishesVo) {
+        if (null == instance) {
+            instance = new RestaurantWaitressGirl(dishesVo);
+        }
+        return instance;
+    }
+
     public static RestaurantWaitressGirl getInstance() {
         return instance;
+    }
+
+    public static void destroyInstance() {
+        instance = null;
     }
 
     /**
      * 按类别和推荐、排行整理菜品,map索引是类别名称，索引到的值是 dish 的 list
      */
     private void makeCategory() {
+        catedDishMap = new HashMap<String, List<Dish>>();
+        dishMap = new HashMap<Long, Dish>();
         // 按recommended 指数生成推荐列表
         List<Dish> recommendList = new ArrayList<Dish>();
         List<Dish> orderedList = new ArrayList<Dish>();
@@ -116,6 +140,7 @@ public class RestaurantWaitressGirl {
      * 因为服务返回的 catelist 是没有索引的 list，不便于查找搜索，所以需要使用 map 创建索引
      */
     private void mapingCategory() {
+        catMap = new HashMap<Long, Category>();
         for (Category cat : dishesVo.getCatlist()) {
             if (!catMap.containsKey(cat.getCat_id())) {
                 catMap.put(cat.getCat_id(), cat);
@@ -199,11 +224,18 @@ public class RestaurantWaitressGirl {
      * @return
      */
     public List<Dish> getSubmitResultDishList() {
-        if (!isSelectionCorrect(resultMap)) {
-            // TODO: 如果不一样的话要做点什么？？？
-            // TODO: 提醒用户，但依旧使用服务器上的值，或者用户选则重新来一遍或者就依服务器的结果为准
+        if (isLiveOrder) {
+            // 现场点餐，返回协同点餐的结果
+            if (!isSelectionCorrect(resultMap)) {
+                // TODO: 如果不一样的话要做点什么？？？
+                // TODO: 提醒用户，但依旧使用服务器上的值，或者用户选则重新来一遍或者就依服务器的结果为准
+            }
+            return getResultList();
+        } else {
+            // 预订点餐，返回本地结果
+            return getSelectedDishList();
         }
-        return getSelectedDishList();
+
     }
 
 
@@ -243,6 +275,18 @@ public class RestaurantWaitressGirl {
         }
 
         return true;
+    }
+
+    private List<Dish> getResultList() {
+        List<Dish> seletedDishList = new ArrayList<Dish>();
+
+        Iterator iter2 = resultMap.entrySet().iterator();
+        while (iter2.hasNext()) {
+            Map.Entry<Long, Integer> entry = (Map.Entry<Long, Integer>) iter2.next();
+
+            seletedDishList.add(dishMap.get(entry.getKey()));
+        }
+        return seletedDishList;
     }
 
 }

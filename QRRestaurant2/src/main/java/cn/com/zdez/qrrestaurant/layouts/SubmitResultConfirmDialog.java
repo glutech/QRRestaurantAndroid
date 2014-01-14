@@ -14,11 +14,14 @@ import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import java.util.List;
+
 import cn.com.zdez.qrrestaurant.OrderDetailsActivity;
 import cn.com.zdez.qrrestaurant.PersonalCenterActivity;
 import cn.com.zdez.qrrestaurant.R;
 import cn.com.zdez.qrrestaurant.helper.RestaurantWaitressGirl;
 import cn.com.zdez.qrrestaurant.http.QRRHTTPClient;
+import cn.com.zdez.qrrestaurant.model.Dish;
 import cn.com.zdez.qrrestaurant.utils.Constants;
 import cn.com.zdez.qrrestaurant.vo.MenuVo;
 
@@ -90,31 +93,50 @@ public class SubmitResultConfirmDialog extends Dialog {
 
 
                 RequestParams params = new RequestParams();
-                params.put("t_id", String.valueOf(girl.serveTable));
-                QRRHTTPClient.post(Constants.SUBMIT_ORDER_CONRIM, params, new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(String content) {
-                        super.onSuccess(content);
-                        Gson gson = new Gson();
-                        MenuVo mv = gson.fromJson(content, MenuVo.class);
-                        String m_id = String.valueOf(mv.getMenu().getMenu_id());
-                        dismiss();
+                // 在这里根据girl 中记录的是否是现场点餐，向服务器提交菜单
+                if (girl.isLiveOrder) {
+                    // 确认提交现场点餐结果
+                    params.put("t_id", String.valueOf(girl.serveTable));
+                    QRRHTTPClient.post(Constants.SUBMIT_ORDER_CONRIM, params, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(String content) {
+                            super.onSuccess(content);
+                            Gson gson = new Gson();
+                            MenuVo mv = gson.fromJson(content, MenuVo.class);
+                            String m_id = String.valueOf(mv.getMenu().getMenu_id());
+                            dismiss();
 
-                        // 将选中的菜品清空，防止返回时还有选择
-                        girl.clearAllSelection();
+                            // 将选中的菜品清空，防止返回时还有选择
+                            girl.clearAllSelection();
 
-                        Intent orderResultIntent = new Intent();
-                        orderResultIntent.setClass(context, OrderDetailsActivity.class);
-                        orderResultIntent.putExtra("m_id", m_id);
-                        context.startActivity(orderResultIntent);
-                    }
+                            Intent orderResultIntent = new Intent();
+                            orderResultIntent.setClass(context, OrderDetailsActivity.class);
+                            orderResultIntent.putExtra("m_id", m_id);
+                            context.startActivity(orderResultIntent);
+                        }
 
-                    @Override
-                    public void onFailure(Throwable error, String content) {
-                        super.onFailure(error, content);
-                        // TODO: 提示失败信息，并做相应的实体销毁处理
-                    }
-                });
+                        @Override
+                        public void onFailure(Throwable error, String content) {
+                            super.onFailure(error, content);
+                            // TODO: 提示失败信息，并做相应的实体销毁处理
+                        }
+                    });
+                } else {
+                    // 提交预订菜单
+                    params.put("r_id", String.valueOf(girl.belongRestaurantID));
+                    params.put("order_list", new Gson().toJson(girl.selection));
+                    QRRHTTPClient.post(Constants.SUBMIT_BOOK_ORDER, params, new AsyncHttpResponseHandler(){
+                        @Override
+                        public void onSuccess(String content) {
+                            super.onSuccess(content);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable error, String content) {
+                            super.onFailure(error, content);
+                        }
+                    });
+                }
             }
         });
     }

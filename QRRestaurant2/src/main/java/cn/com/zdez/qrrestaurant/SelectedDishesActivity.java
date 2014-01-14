@@ -25,6 +25,11 @@ import cn.com.zdez.qrrestaurant.layouts.DishesSelectedAdapter;
 import cn.com.zdez.qrrestaurant.layouts.SubmitResultConfirmDialog;
 import cn.com.zdez.qrrestaurant.model.Dish;
 
+/**
+ * 用于两个场景，都是用来显示已选择的菜单和继续添加菜品的
+ * 当 intent 中含有桌号 t_id 的时候说明是在现场点餐，需要协同点餐操作
+ * 而当 intent 中含有餐厅号,不含有 r_id 的时候，不需要协同点餐，提交操作也不一样
+ */
 public class SelectedDishesActivity extends ActionBarActivity {
 
     ActionBar actionBar;
@@ -35,13 +40,14 @@ public class SelectedDishesActivity extends ActionBarActivity {
     private static Runnable runReloadTheList;
     private static Runnable runTheSubmitResultDialog;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selected_dishes);
 
         actionBar = getSupportActionBar();
-        girl = QRRestaurantApplication.getGirl();
+        girl = RestaurantWaitressGirl.getInstance();
 
         runnable = new Runnable() {
             @Override
@@ -60,6 +66,7 @@ public class SelectedDishesActivity extends ActionBarActivity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
+
 
         // 添加返回箭头
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -168,18 +175,31 @@ public class SelectedDishesActivity extends ActionBarActivity {
                 }
             };
 
-            girl.wsMsgHandler.setInSelectedList(tvOrderMsg, handler, runnable, runReloadTheList, runTheSubmitResultDialog);
+
+            // 修改一下按钮的提示，改为预订
+            if (!girl.isLiveOrder) {
+                btnSubmmitSelected.setText("预订");
+            }else{
+                girl.wsMsgHandler.setInSelectedList(tvOrderMsg, handler, runnable, runReloadTheList, runTheSubmitResultDialog);
+            }
 
             btnSubmmitSelected.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String submitMsg = "SUBMIT " + QRRestaurantApplication.accountManager.mUserId;
-                    girl.wsConnection.sendTextMessage(submitMsg);
+                    // 如果是现场点餐的话，就预提交菜单
+                    if (girl.isLiveOrder) {
+                        String submitMsg = "SUBMIT " + QRRestaurantApplication.accountManager.mUserId;
+                        girl.wsConnection.sendTextMessage(submitMsg);
+                    } else {
+                        resultConfirmDialog = new SubmitResultConfirmDialog(getActivity(), R.style.submitResultDialog, R.layout.submit_result_confirm_dialog_layout);
+                        resultConfirmDialog.show();
+                    }
                 }
             });
 
             return rootView;
         }
+
     }
 
 }

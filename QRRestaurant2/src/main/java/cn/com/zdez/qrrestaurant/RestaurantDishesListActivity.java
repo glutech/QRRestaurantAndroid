@@ -1,6 +1,8 @@
 package cn.com.zdez.qrrestaurant;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -130,18 +132,23 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
 
-
-//        // 显示正在加载的界面
-//        showProgress(true);
-
         // 加载餐厅信息和菜品
         loadRestaurantInfo();
-
 
         setSelectIntent();
 
         // 添加返回箭头
         actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyLog.d(TAG, "Just on Resume.........................");
+        if (girl != null && girl.wsMsgHandler != null) {
+            girl.wsMsgHandler.isInSelectedListActivity = false;
+            btnSelectedCounter.setText("已点：" + girl.totalSelection());
+        }
     }
 
 
@@ -174,6 +181,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             } else if (intent.hasExtra("rid")) {
                 // 如果 intent 过来的信息中含有 restaurant id，意味着是点选餐厅进行点餐，直接使用 rid请求餐厅信息
                 long rid = intent.getLongExtra("rid", -1);
+                mTableId = null;
                 url = Constants.CHOOSE_TO_ORDER;
                 paramKey = "r_id";
                 paramValue = String.valueOf(rid);
@@ -223,8 +231,14 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
                         MyLog.d(TAG, "Parse json out, restName: " + dishesVo.getRest_name() + " and the dish: " + dishesVo.getDishlist().get(0).getDish_name());
                     }
 
-                    // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
-                    girl = RestaurantWaitressGirl.getInstance(dishesVo, mTableId);
+                    // 初始化 girl, 分现场点餐的和预订的
+                    //*****************************************************************
+                    if (mTableId != null && mTableId >= 0) {
+                        girl = RestaurantWaitressGirl.getInstance(dishesVo, mTableId); //**
+                    } else {
+                        girl = RestaurantWaitressGirl.getInstance(dishesVo);
+                    }
+                    //*****************************************************************
 
                     tvLoadInfo.setVisibility(View.GONE);
                     mToggleIndeterminate = !mToggleIndeterminate;
@@ -260,9 +274,13 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
                 // 取得餐厅数据之后，首先要修改 tab pager 的参数，在取得数据之前使用默认的
 
-                // 初始化 girl
+                // 初始化 girl, 分现场点餐的和预订的
                 //*****************************************************************
-                girl = RestaurantWaitressGirl.getInstance(dishesVo, mTableId); //**
+                if (mTableId != null && mTableId >= 0) {
+                    girl = RestaurantWaitressGirl.getInstance(dishesVo, mTableId); //**
+                } else {
+                    girl = RestaurantWaitressGirl.getInstance(dishesVo);
+                }
                 //*****************************************************************
 
 
@@ -388,6 +406,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
 
         }
 
+        @TargetApi(Build.VERSION_CODES.HONEYCOMB)
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -492,7 +511,9 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
         private static void sendWSMessage(String payload) {
             // TODO: 为了增强容错性，要对这个操作的返回值进行判断，并决定接下来对用户的提示，和本地菜单的更新
             // TODO: 但并非直接返回，而是要在返回消息中监测返回的错误提示类型
-            girl.wsConnection.sendTextMessage(payload);
+            // 如果是预订点餐的话，就不用发送信息了
+            if (mTableId != null && mTableId >= 0)
+                girl.wsConnection.sendTextMessage(payload);
         }
 
         @Override
@@ -611,8 +632,7 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
             @Override
             public void onClick(View view) {
                 Intent toSelectedList = new Intent();
-                // 需要在 activity 之间
-                QRRestaurantApplication.setGirl(girl);
+
                 toSelectedList.setClass(RestaurantDishesListActivity.this, SelectedDishesActivity.class);
                 startActivity(toSelectedList);
             }
@@ -623,20 +643,11 @@ public class RestaurantDishesListActivity extends ActionBarActivity implements A
     protected void onDestroy() {
         super.onDestroy();
         MyLog.d(TAG, "Just on Destroy......................");
-        girl.wsConnection.disconnect();
+        if (girl.isLiveOrder) girl.wsConnection.disconnect();
         girl.clearAllSelection();
-        girl = null;
+        girl.destroyInstance();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MyLog.d(TAG, "Just on Resume.........................");
-        if (girl != null && girl.wsMsgHandler != null) {
-            girl.wsMsgHandler.isInSelectedListActivity = false;
-            btnSelectedCounter.setText("已点：" + girl.totalSelection());
-        }
-    }
 
     public static void valideTheCurrentListView() {
         PlaceholderFragment.invalidateCurrentListView(mViewPager.getCurrentItem() + 1);

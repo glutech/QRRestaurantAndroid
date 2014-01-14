@@ -26,7 +26,7 @@ public class QRRestaurantApplication extends Application {
     public static long userId;
     public static SharedPreferences mPrefs;
     public static AccountManager accountManager;
-    public static RestaurantWaitressGirl girl;
+//    public static RestaurantWaitressGirl girl;
 
     // 服务起没有写生成 accessTocken 的逻辑，所以在客户端这里先假装模仿一个，just in case
     public static String fakeAccessTocken = "TASJDLLJGOOF9090";
@@ -89,12 +89,12 @@ public class QRRestaurantApplication extends Application {
     }
 
 
-    public static void setGirl(RestaurantWaitressGirl rwg){
-        girl = rwg;
-    }
-
-    public static RestaurantWaitressGirl getGirl(){
-        return girl;
-    }
+//    public static void setGirl(RestaurantWaitressGirl rwg){
+//        girl = rwg;
+//    }
+//
+//    public static RestaurantWaitressGirl getGirl(){
+//        return girl;
+//    }
 
 }

@@ -51,7 +51,7 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
     private boolean mToggleIndeterminate = false;
     private TextView tvAlert;
     private TextView tvLoadInfo;
-    public static List<Restaurant> restaurantList;
+    public List<Restaurant> restaurantList;
     ActionBar actionBar;
 
 
@@ -64,6 +64,12 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
         tvAlert = (TextView) findViewById(R.id.tv_rests_alert);
         tvLoadInfo = (TextView) findViewById(R.id.tv_onloading);
 
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         actionBar = getSupportActionBar();
 
 
@@ -180,10 +186,10 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore the previously serialized current dropdown position.
         if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
-            try{
+            try {
                 getSupportActionBar().setSelectedNavigationItem(
                         savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -245,7 +251,7 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
         // When the given dropdown item is selected, show its contents in the
         // container view.
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1, restaurantList))
                 .commit();
         return true;
     }
@@ -261,16 +267,18 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
         private static final String ARG_SECTION_NUMBER = "section_number";
         ListView lvRestaurant;
         RestaurantListAdapter listAdapter;
+        List<Restaurant> rlist;
 
-        public PlaceholderFragment() {
+        public PlaceholderFragment(List<Restaurant> restaurantList1) {
+            rlist = restaurantList1;
         }
 
         /**
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
+        public static PlaceholderFragment newInstance(int sectionNumber, List<Restaurant> restaurantList1) {
+            PlaceholderFragment fragment = new PlaceholderFragment(restaurantList1);
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
@@ -286,7 +294,7 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
 
             // TODO: 在此分离餐厅列表，附近（按城市、地区，区分）的和推荐的
             // 目前全部一样
-            listAdapter = new RestaurantListAdapter(getActivity(), R.id.lv_restaurants_list, restaurantList);
+            listAdapter = new RestaurantListAdapter(getActivity(), R.id.lv_restaurants_list, rlist);
             lvRestaurant.setAdapter(listAdapter);
 
             // 列表点击，跳转餐厅详情
@@ -295,8 +303,8 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Intent detailIntent = new Intent();
                     detailIntent.setClass(getActivity(), RestaurantDishesListActivity.class);
-//                    detailIntent.putExtra("rid", restaurantList.get(i).getRest_id());
-                    detailIntent.putExtra("tid", "2");
+                    detailIntent.putExtra("rid", rlist.get(i).getRest_id());
+//                    detailIntent.putExtra("tid", "2");
                     startActivity(detailIntent);
                 }
             });
