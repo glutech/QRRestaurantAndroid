@@ -212,7 +212,8 @@ public class RestaurantWaitressGirl {
         Iterator iter2 = selection.entrySet().iterator();
         while (iter2.hasNext()) {
             Map.Entry<Long, Integer> entry = (Map.Entry<Long, Integer>) iter2.next();
-
+            Dish dish = dishMap.get(entry.getKey());
+            dish.setCount(entry.getValue());
             seletedDishList.add(dishMap.get(entry.getKey()));
         }
         return seletedDishList;

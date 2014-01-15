@@ -33,6 +33,7 @@ public final class Constants {
     public static final String GET_DISH_COMMENTS = "/order/get_comment";
     public static final String SUBMIT_DISH_COMMENT = "/order/write_comment";
     public static final String SUBMIT_BOOK_ORDER = "/book/submit_bookorder";
+    public static final String GET_ORDER_LIST = "/history/list_orders";
 
     public static final String TABLE_TAKE_POST_URL = "/tables/take"; // 废弃
     public static final String SCAN_TO_ORDER = "/order/scan";

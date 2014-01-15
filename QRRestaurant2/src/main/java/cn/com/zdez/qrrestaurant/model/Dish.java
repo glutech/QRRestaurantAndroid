@@ -15,6 +15,15 @@ public class Dish {
     private int dish_ordered;
     private long cat_id;
     private long rest_id;
+    private int count; // FIXME: 特殊属性，只有在处理订单的时候用到，用于菜品计数
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
 
     public long getDish_id() {
         return dish_id;

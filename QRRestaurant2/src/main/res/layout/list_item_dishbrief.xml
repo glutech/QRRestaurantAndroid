@@ -31,6 +31,6 @@
         android:padding="5dp"
         android:textColor="@color/blue"
         android:gravity="center_vertical"
-        android:text="x1" />
+        android:text="x" />
 
 </cn.com.zdez.qrrestaurant.layouts.DishBriefItem>

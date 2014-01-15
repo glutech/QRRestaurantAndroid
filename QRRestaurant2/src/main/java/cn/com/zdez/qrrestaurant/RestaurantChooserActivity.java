@@ -63,8 +63,6 @@ public class RestaurantChooserActivity extends ActionBarActivity implements Acti
 
         tvAlert = (TextView) findViewById(R.id.tv_rests_alert);
         tvLoadInfo = (TextView) findViewById(R.id.tv_onloading);
-
-
     }
 
     @Override

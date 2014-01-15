@@ -29,6 +29,7 @@ public class OrderDetailsActivity extends ActionBarActivity {
     private TextView tvOrderStatus;
     private TextView tvRestAddress;
     private TextView tvOrderDate;
+    private TextView tvTotalPrice;
     private ListView lvOrderDishes;
     private Intent intent;
     private ActionBar actionBar;
@@ -43,6 +44,7 @@ public class OrderDetailsActivity extends ActionBarActivity {
         tvRestName = (TextView) findViewById(R.id.tv_order_rest_name);
         tvRestAddress = (TextView) findViewById(R.id.tv_order_rest_address);
         lvOrderDishes = (ListView) findViewById(R.id.lv_dishes_in_order_detail);
+        tvTotalPrice = (TextView) findViewById(R.id.tv_order_totalprice);
 
         intent = getIntent();
         mId = intent.getStringExtra("m_id");
@@ -74,6 +76,7 @@ public class OrderDetailsActivity extends ActionBarActivity {
                     tvOrderDate.append(mv.getMenu().getMenu_time().toString());
                     tvRestName.append(String.valueOf(mv.getMenu().getRest_id()));
                     tvOrderStatus.append(String.valueOf(mv.getMenu().getMenu_status()));
+                    tvTotalPrice.append(String.valueOf(mv.getMenu().getMenu_price()));
                     DishBriefListAdapter adapter = new DishBriefListAdapter(OrderDetailsActivity.this, R.id.lv_dishes_in_order_detail, mv.getDishes());
                     lvOrderDishes.setAdapter(adapter);
                     ListViewUtil.setListViewHeightBasedOnChildren(lvOrderDishes);
