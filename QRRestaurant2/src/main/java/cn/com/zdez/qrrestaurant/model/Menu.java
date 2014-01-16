@@ -3,7 +3,7 @@ package cn.com.zdez.qrrestaurant.model;
 import java.sql.Timestamp;
 
 /**
- * 本该命名为 Order，但服务器这样命名的话，为统一逻辑，避免与服务器接驳的时候产生混乱
+ * 本该命名为 Order，因为服务器这样命名，所以为统一逻辑，避免与服务器接驳的时候产生混乱，沿用 Menu
  * 但这个类代表用户订单，而不是餐厅订单
  */
 public class Menu {

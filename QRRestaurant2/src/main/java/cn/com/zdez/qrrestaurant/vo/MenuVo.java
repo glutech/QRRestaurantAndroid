@@ -11,19 +11,40 @@ import cn.com.zdez.qrrestaurant.model.Menu;
  * 但这个类代表用户订单，而不是餐厅订单
  */
 public class MenuVo {
-	Menu menu;
-	ArrayList<Dish> dishes;
-	
-	public Menu getMenu() {
-		return menu;
-	}
-	public void setMenu(Menu menu) {
-		this.menu = menu;
-	}
-	public ArrayList<Dish> getDishes() {
-		return dishes;
-	}
-	public void setDishes(List<Dish> dishlist) {
-		this.dishes = (ArrayList<Dish>) dishlist;
-	}
+    Menu menu;
+    ArrayList<Dish> dishes;
+    String restName;
+    String restAddr;
+
+    public String getRestName() {
+        return restName;
+    }
+
+    public void setRestName(String restName) {
+        this.restName = restName;
+    }
+
+    public String getRestAddr() {
+        return restAddr;
+    }
+
+    public void setRestAddr(String restAddr) {
+        this.restAddr = restAddr;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public void setMenu(Menu menu) {
+        this.menu = menu;
+    }
+
+    public ArrayList<Dish> getDishes() {
+        return dishes;
+    }
+
+    public void setDishes(List<Dish> dishlist) {
+        this.dishes = (ArrayList<Dish>) dishlist;
+    }
 }

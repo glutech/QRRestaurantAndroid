@@ -65,21 +65,23 @@ public class SelectedItemLayout extends RelativeLayout {
             public void onClick(View view) {
                 theGirl.addNewSelection(did);
                 tvCount.setText("x" + RestaurantWaitressGirl.selection.get(did).toString());
-                theGirl.wsConnection.sendTextMessage("ADD " + String.valueOf(QRRestaurantApplication.accountManager.mUserId) + " " + did);
+                if (theGirl.isLiveOrder)
+                    theGirl.wsConnection.sendTextMessage("ADD " + String.valueOf(QRRestaurantApplication.accountManager.mUserId) + " " + did);
             }
         });
         btnDeletedOne.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(theGirl.removeSelection(did) <= 0){
+                if (theGirl.removeSelection(did) <= 0) {
                     // 点击之前剩1，减少之后就没有这个菜的选项了，
                     //TODO: 给个提示,并且直接在列表中删除，而不是显示数目为 0
                     ToastUtil.showShortToast(context, "这个菜品被取消了");
                     tvCount.setText("x0");
-                }else{
+                } else {
                     tvCount.setText("x" + theGirl.selection.get(did).toString());
                 }
-                theGirl.wsConnection.sendTextMessage("DELETE " + String.valueOf(QRRestaurantApplication.accountManager.mUserId) + " " + did);
+                if (theGirl.isLiveOrder)
+                    theGirl.wsConnection.sendTextMessage("DELETE " + String.valueOf(QRRestaurantApplication.accountManager.mUserId) + " " + did);
 
             }
         });

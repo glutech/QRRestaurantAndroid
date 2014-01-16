@@ -18,11 +18,14 @@ import java.util.List;
 
 import cn.com.zdez.qrrestaurant.OrderDetailsActivity;
 import cn.com.zdez.qrrestaurant.PersonalCenterActivity;
+import cn.com.zdez.qrrestaurant.QRRestaurantApplication;
 import cn.com.zdez.qrrestaurant.R;
 import cn.com.zdez.qrrestaurant.helper.RestaurantWaitressGirl;
 import cn.com.zdez.qrrestaurant.http.QRRHTTPClient;
 import cn.com.zdez.qrrestaurant.model.Dish;
 import cn.com.zdez.qrrestaurant.utils.Constants;
+import cn.com.zdez.qrrestaurant.utils.MyLog;
+import cn.com.zdez.qrrestaurant.vo.DishesMapBuilderForGson;
 import cn.com.zdez.qrrestaurant.vo.MenuVo;
 
 /**
@@ -101,18 +104,8 @@ public class SubmitResultConfirmDialog extends Dialog {
                         @Override
                         public void onSuccess(String content) {
                             super.onSuccess(content);
-                            Gson gson = new Gson();
-                            MenuVo mv = gson.fromJson(content, MenuVo.class);
-                            String m_id = String.valueOf(mv.getMenu().getMenu_id());
-                            dismiss();
 
-                            // 将选中的菜品清空，防止返回时还有选择
-                            girl.clearAllSelection();
-
-                            Intent orderResultIntent = new Intent();
-                            orderResultIntent.setClass(context, OrderDetailsActivity.class);
-                            orderResultIntent.putExtra("m_id", m_id);
-                            context.startActivity(orderResultIntent);
+                            toOrderDetail(content);
                         }
 
                         @Override
@@ -123,22 +116,46 @@ public class SubmitResultConfirmDialog extends Dialog {
                     });
                 } else {
                     // 提交预订菜单
+                    params.put("c_id", String.valueOf(QRRestaurantApplication.getUserID()));
                     params.put("r_id", String.valueOf(girl.belongRestaurantID));
-                    params.put("order_list", new Gson().toJson(girl.selection));
-                    QRRHTTPClient.post(Constants.SUBMIT_BOOK_ORDER, params, new AsyncHttpResponseHandler(){
+                    DishesMapBuilderForGson gb = new DishesMapBuilderForGson();
+                    gb.setMap(girl.selection);
+                    params.put("order_list", new Gson().toJson(gb));
+                    QRRHTTPClient.post(Constants.SUBMIT_BOOK_ORDER, params, new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(String content) {
                             super.onSuccess(content);
+                            MyLog.d("Submitdialog", "Success:" + content);
+                            toOrderDetail(content);
                         }
 
                         @Override
                         public void onFailure(Throwable error, String content) {
                             super.onFailure(error, content);
+
+                            MyLog.d("Submitdialog", "Failed:" + content);
                         }
                     });
                 }
             }
         });
+
+
+    }
+
+    private void toOrderDetail(String content) {
+        Gson gson = new Gson();
+        MenuVo mv = gson.fromJson(content, MenuVo.class);
+        String m_id = String.valueOf(mv.getMenu().getMenu_id());
+        dismiss();
+
+        // 将选中的菜品清空，防止返回时还有选择
+        girl.clearAllSelection();
+
+        Intent orderResultIntent = new Intent();
+        orderResultIntent.setClass(context, OrderDetailsActivity.class);
+        orderResultIntent.putExtra("m_id", m_id);
+        context.startActivity(orderResultIntent);
     }
 
     @Override

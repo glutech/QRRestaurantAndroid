@@ -73,10 +73,10 @@ public class OrderDetailsActivity extends ActionBarActivity {
                 }
 
                 if (null != mv) {
-                    tvOrderDate.append(mv.getMenu().getMenu_time().toString());
-                    tvRestName.append(String.valueOf(mv.getMenu().getRest_id()));
-                    tvOrderStatus.append(String.valueOf(mv.getMenu().getMenu_status()));
-                    tvTotalPrice.append(String.valueOf(mv.getMenu().getMenu_price()));
+                    tvOrderDate.setText(mv.getMenu().getMenu_time().toString());
+                    tvRestName.setText(String.valueOf(mv.getRestName()));
+                    tvOrderStatus.setText(String.valueOf(mv.getMenu().getMenu_status()));
+                    tvTotalPrice.setText(String.valueOf(mv.getMenu().getMenu_price()));
                     DishBriefListAdapter adapter = new DishBriefListAdapter(OrderDetailsActivity.this, R.id.lv_dishes_in_order_detail, mv.getDishes());
                     lvOrderDishes.setAdapter(adapter);
                     ListViewUtil.setListViewHeightBasedOnChildren(lvOrderDishes);

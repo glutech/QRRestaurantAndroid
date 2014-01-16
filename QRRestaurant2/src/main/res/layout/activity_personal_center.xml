@@ -62,8 +62,6 @@
 
                     <ListView
                         android:id="@+id/lv_orders_in_pcenter"
-                        android:paddingTop="20dp"
-                        android:paddingBottom="20dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"></ListView>
 
