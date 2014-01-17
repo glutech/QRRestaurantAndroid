@@ -12,8 +12,6 @@
             android:id="@+id/lv_restaurants_list"
             android:layout_height="match_parent"
             android:layout_width="match_parent">
-
-
         </ListView>
 
     </FrameLayout>

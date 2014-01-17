@@ -41,6 +41,7 @@ import cn.com.zdez.qrrestaurant.utils.MyLog;
 public class RestaurantChooserActivity extends ActionBarActivity implements ActionBar.OnNavigationListener {
 
     /**
+     * TODO: 这个选择的 activity 含有多种选择方式，还有搜索，将来实现这些功能的时候再用
      * 在预订的时候要进行餐厅的选择，首先像服务器请求餐厅列表
      * TODO: 加入餐厅的选择条件（定位周边，搜索关键字，推荐列表，用户查看过的历史餐厅列表）
      * The serialization (saved instance state) Bundle key representing the

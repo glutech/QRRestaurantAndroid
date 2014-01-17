@@ -255,6 +255,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cn.com.zdez.qrrestaurant.PersonalCenterActivity" />
         </activity>
+        <activity
+            android:name="cn.com.zdez.qrrestaurant.RestaurantSimpleChooserActivity"
+            android:label="@string/title_activity_restaurant_simple_chooser" >
+        </activity>
     </application>
 
 </manifest>

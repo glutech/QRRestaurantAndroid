@@ -145,5 +145,6 @@
     <string name="title_activity_history_orders">我的订单</string>
     <string name="title_activity_personal_center">个人中心</string>
     <string name="title_activity_order_details">订单详情</string>
+    <string name="title_activity_restaurant_simple_chooser">选择餐厅</string>
 
 </resources>

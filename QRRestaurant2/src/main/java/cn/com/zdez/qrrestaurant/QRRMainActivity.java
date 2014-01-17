@@ -54,7 +54,7 @@ public class QRRMainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 Intent toChoose = new Intent();
                 // Start to scan
-                toChoose.setClass(QRRMainActivity.this, RestaurantChooserActivity.class);
+                toChoose.setClass(QRRMainActivity.this, RestaurantSimpleChooserActivity.class);
                 startActivity(toChoose);
             }
         });
